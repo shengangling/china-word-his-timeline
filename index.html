@@ -5261,20 +5261,42 @@ document.getElementById('navL').onclick = ()=>scroller.scrollTo({left: scroller.
 document.getElementById('navR').onclick = ()=>scroller.scrollTo({left: scroller.scrollLeft + scroller.clientWidth*0.6, behavior:'smooth'});
 /* 时代快速跳转 */
 const ERAS = [['远古文明',-3000],['夏商周',-1500],['春秋战国 · 希腊',-500],['秦汉 · 罗马',-50],['魏晋隋唐',450],['宋 · 阿拉伯',1050],['元明 · 文艺复兴',1400],['清 · 大航海之后',1700],['近现代',1930]];
-document.getElementById('eranav').innerHTML = ERAS.map(e=>`<button data-y="${e[1]}">${e[0]}</button>`).join('');
-document.getElementById('eranav').addEventListener('click', e=>{
+const eranav = document.getElementById('eranav');
+eranav.innerHTML = ERAS.map(e=>`<button data-y="${e[1]}">${e[0]}</button>`).join('');
+/* 把指定胶囊滚到导航条中央，露出其左右相邻的时代 */
+function centerEraBtn(b, smooth){
+  if(!b) return;
+  const max = eranav.scrollWidth - eranav.clientWidth;
+  if(max <= 0) return;                       /* 未溢出则无需滚动 */
+  const target = Math.max(0, Math.min(max, b.offsetLeft - (eranav.clientWidth - b.offsetWidth) / 2));
+  if(Math.abs(target - eranav.scrollLeft) < 2) return;
+  eranav.scrollTo({left: target, behavior: smooth === false ? 'auto' : 'smooth'});
+}
+/* 点击后时间轴平滑滚动会途经其它时代，短暂锁住自动跟随，避免导航条来回抖动 */
+let eraLock = 0;
+let curEra = -1;
+eranav.addEventListener('click', e=>{
   const b = e.target.closest('button'); if(!b) return;
-  if(VERT){
-    vscroll.scrollTo({top: 8 + (+b.dataset.y - MINY)*VZOOMS[vzi] - vscroll.clientHeight/2, behavior:'smooth'});
-  } else {
-    scroller.scrollTo({left: PADL + (+b.dataset.y - MINY)*ZOOMS[zi] - scroller.clientWidth/2, behavior:'smooth'});
-  }
+  const btns = [...eranav.querySelectorAll('button')];
+  /* 锁定期内不让滚动事件改写高亮：时间轴到达两端时无法真正居中，
+     否则高亮会被算回相邻时代，看起来像没点中 */
+  eraLock = performance.now() + 900;
+  curEra = btns.indexOf(b);
+  btns.forEach(x=>x.classList.toggle('cur', x===b));
+  centerEraBtn(b);
+  scroller.scrollTo({left: PADL + (+b.dataset.y - MINY)*ZOOMS[zi] - scroller.clientWidth/2, behavior:'smooth'});
 });
-/* 当前时代按钮高亮（横竖两版共用） */
+/* 当前时代按钮高亮；高亮切换时导航条自动跟随居中 */
 function highlightEra(mid){
+  if(performance.now() < eraLock) return;      /* 点击引发的滚动期间不抢高亮、不抢滚 */
   let best = 0, bd = 1e9;
   ERAS.forEach((e,i)=>{ const d = Math.abs(e[1] - mid); if(d < bd){ bd = d; best = i; } });
-  document.querySelectorAll('#eranav button').forEach((b,i)=>b.classList.toggle('cur', i===best));
+  if(best === curEra) return;
+  const first = curEra === -1;
+  curEra = best;
+  const btns = eranav.querySelectorAll('button');
+  btns.forEach((b,i)=>b.classList.toggle('cur', i===best));
+  centerEraBtn(btns[best], !first);            /* 首次定位不做动画 */
 }
 /* 以指针位置为锚点的分级缩放（横版 / 竖版） */
 function zoomStepAt(dir, clientX){
