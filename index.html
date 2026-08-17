@@ -5,33 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
 <meta name="theme-color" content="#f9f9f7">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="历史时间轴">
 <title>中外历史对照时间轴 · 前3500年—2026年</title>
 <style>
   :root{
     color-scheme: light;
-    --surface:#fcfcfb; --page:#f9f9f7;
-    --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
-    --grid:#e1e0d9; --baseline:#c3c2b7; --ring:rgba(11,11,11,.10);
+    --surface:#fdfdfc; --page:#f7f6f2;
+    --ink:#111110; --ink2:#55534e; --muted:#8b8880;
+    --grid:#e4e2da; --baseline:#c6c4b8; --ring:rgba(17,17,16,.11);
+    --sh1:0 1px 2px rgba(24,22,18,.05);
+    --sh2:0 2px 6px -1px rgba(24,22,18,.09), 0 1px 2px rgba(24,22,18,.05);
+    --sh3:0 12px 30px -14px rgba(24,22,18,.30), 0 2px 6px -2px rgba(24,22,18,.08);
     --c-europe:#2a78d6; --c-neareast:#eb6834; --c-egypt:#eda100;
     --c-india:#e87ba4; --c-japan:#1baf7a; --c-america:#008300;
     --c-china:#e34948; --c-china2:#4a3aa7;
     --panel-bg:#ffffff;
-    --sea:#e9f0f6; --land:#e5e3da;
+    --sea:#e9f0f6; --sea2:#d3e2ef; --land:#eae7dc; --coast:#c9c4b2;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       color-scheme: dark;
-      --surface:#1a1a19; --page:#0d0d0d;
-      --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
-      --grid:#2c2c2a; --baseline:#383835; --ring:rgba(255,255,255,.10);
+      --surface:#1b1b1a; --page:#0e0e0d;
+      --ink:#f7f6f3; --ink2:#c1bfb5; --muted:#8b8880;
+      --grid:#2d2d2a; --baseline:#3c3b37; --ring:rgba(255,255,255,.11);
+      --sh1:0 1px 2px rgba(0,0,0,.4);
+      --sh2:0 2px 6px -1px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
+      --sh3:0 12px 30px -14px rgba(0,0,0,.8), 0 2px 6px -2px rgba(0,0,0,.5);
       --c-europe:#3987e5; --c-neareast:#d95926; --c-egypt:#c98500;
       --c-india:#d55181; --c-japan:#199e70; --c-america:#008300;
       --c-china:#e66767; --c-china2:#9085e9;
       --panel-bg:#222220;
-      --sea:#161c22; --land:#31312d;
+      --sea:#151b23; --sea2:#0c1117; --land:#34342f; --coast:#4c4b42;
     }
   }
   *{box-sizing:border-box; margin:0; padding:0;}
@@ -61,15 +71,17 @@
   .appbar{
     position:sticky; top:0; z-index:40;
     display:flex; align-items:center; gap:10px;
-    padding:10px 16px;
-    background:color-mix(in srgb, var(--page) 82%, transparent);
-    backdrop-filter:saturate(1.6) blur(12px);
+    padding:11px 18px;
+    background:color-mix(in srgb, var(--page) 80%, transparent);
+    backdrop-filter:saturate(1.7) blur(14px);
     border-bottom:1px solid var(--ring);
+    box-shadow:0 1px 0 color-mix(in srgb, var(--surface) 60%, transparent);
   }
   .brand{display:flex; align-items:center; gap:9px; flex:none;}
   .brandmark{
-    width:7px; height:26px; border-radius:4px; flex:none;
-    background:linear-gradient(180deg, var(--c-china), var(--c-egypt));
+    width:7px; height:27px; border-radius:4px; flex:none;
+    background:linear-gradient(170deg, var(--c-china), var(--c-egypt) 55%, var(--c-china2));
+    box-shadow:0 1px 5px -1px color-mix(in srgb, var(--c-china) 55%, transparent);
   }
   .brandtxt{display:flex; flex-direction:column; line-height:1.25;}
   .brandtxt strong{
@@ -82,8 +94,9 @@
   .spacer{flex:1;}
   .seg{
     display:flex; align-items:center; flex:none;
-    border:1px solid var(--ring); border-radius:9px;
+    border:1px solid var(--ring); border-radius:10px;
     background:var(--surface); overflow:hidden;
+    box-shadow:var(--sh1);
   }
   .seg button{
     width:32px; height:32px; border:none; background:none;
@@ -97,23 +110,25 @@
     padding:0 6px; font-variant-numeric:tabular-nums;
   }
   .iconbtn{
-    flex:none; height:32px; min-width:32px; padding:0 11px;
-    border:1px solid var(--ring); border-radius:9px;
+    flex:none; height:32px; min-width:32px; padding:0 12px;
+    border:1px solid var(--ring); border-radius:10px;
     background:var(--surface); color:var(--ink2);
-    font-size:12.5px; font-weight:600; cursor:pointer; white-space:nowrap;
-    transition:border-color .12s, color .12s, background .12s;
+    font-size:12.5px; font-weight:650; cursor:pointer; white-space:nowrap;
+    box-shadow:var(--sh1);
+    transition:border-color .14s, color .14s, background .14s, transform .14s;
   }
-  .iconbtn:hover{border-color:var(--muted); color:var(--ink);}
+  .iconbtn:hover{border-color:var(--muted); color:var(--ink); transform:translateY(-1px);}
+  .iconbtn:active{transform:translateY(0);}
   .iconbtn.on{background:color-mix(in srgb, var(--c-europe) 14%, var(--surface)); border-color:color-mix(in srgb, var(--c-europe) 45%, transparent); color:var(--ink);}
   .tools{display:flex; align-items:center; gap:10px; flex:none;}
   .popwrap{position:relative; flex:none;}
   .popover{
-    position:absolute; top:38px; right:0; z-index:60; display:none;
-    min-width:190px; padding:10px 12px;
-    background:var(--panel-bg); border:1px solid var(--ring); border-radius:12px;
-    box-shadow:0 10px 30px rgba(0,0,0,.18);
+    position:absolute; top:39px; right:0; z-index:60; display:none;
+    min-width:194px; padding:12px 14px;
+    background:var(--panel-bg); border:1px solid var(--ring); border-radius:13px;
+    box-shadow:var(--sh3);
   }
-  .popover.open{display:block;}
+  .popover.open{display:block; animation:riseIn .2s ease both;}
   .popover h4{font-size:11px; color:var(--muted); font-weight:700; margin-bottom:7px; letter-spacing:.06em;}
   .legend{display:flex; flex-direction:column; gap:7px; font-size:12.5px; color:var(--ink2);}
   .legend .it{display:flex; align-items:center; gap:8px;}
@@ -202,13 +217,15 @@
   }
   .blab:hover{text-decoration:underline; text-underline-offset:2px;}
   .glabel{
-    position:absolute; left:8px; z-index:15; pointer-events:none;
-    font-size:11px; font-weight:700; color:var(--ink);
-    background:color-mix(in srgb, var(--surface) 80%, transparent);
+    position:absolute; left:9px; z-index:15; pointer-events:none;
+    display:flex; align-items:center;
+    font-size:11px; font-weight:750; letter-spacing:.02em; color:var(--ink);
+    background:color-mix(in srgb, var(--surface) 84%, transparent);
     border:1px solid var(--ring);
-    padding:2.5px 11px; border-radius:999px;
-    backdrop-filter: blur(4px);
-    box-shadow:0 1px 4px rgba(0,0,0,.08);
+    padding:3px 12px; border-radius:999px;
+    backdrop-filter: blur(6px) saturate(1.3);
+    box-shadow:var(--sh2);
+    transition:opacity .18s;
   }
   .colshade{position:absolute; top:0; bottom:0; background:color-mix(in srgb, var(--ink) 2%, transparent); pointer-events:none;}
   .eranav{
@@ -219,10 +236,11 @@
   .eranav button{
     flex:none;
     border:1px solid var(--ring); background:var(--surface); color:var(--ink2);
-    border-radius:999px; padding:5px 14px; font-size:12px; cursor:pointer;
-    transition:border-color .12s, color .12s, background .12s;
+    border-radius:999px; padding:6px 15px; font-size:12px; font-weight:550; cursor:pointer;
+    box-shadow:var(--sh1);
+    transition:border-color .14s, color .14s, background .14s, transform .14s, box-shadow .14s;
   }
-  .eranav button:hover{border-color:var(--muted); color:var(--ink); background:color-mix(in srgb, var(--ink) 4%, var(--surface));}
+  .eranav button:hover{border-color:var(--muted); color:var(--ink); background:color-mix(in srgb, var(--ink) 4%, var(--surface)); transform:translateY(-1px);}
   .eranav button.cur{
     background:linear-gradient(135deg, color-mix(in srgb, var(--ink) 94%, transparent), color-mix(in srgb, var(--ink) 76%, transparent));
     border-color:transparent; color:var(--surface); font-weight:650;
@@ -230,13 +248,14 @@
   }
   /* ===== 底部缩略导航条 ===== */
   #minimap{
-    position:relative; height:56px; margin:0 12px 6px;
-    border:1px solid var(--ring); border-radius:12px;
+    position:relative; height:58px; margin:0 12px 7px;
+    border:1px solid var(--ring); border-radius:13px;
     background:var(--surface); overflow:hidden; cursor:crosshair;
     user-select:none; -webkit-user-select:none;
+    box-shadow:var(--sh2);
   }
   #mmbars{position:absolute; inset:0;}
-  .mmbar{position:absolute; height:3px; border-radius:2px; opacity:.72;}
+  .mmbar{position:absolute; height:3.5px; border-radius:2px; opacity:.8;}
   .mmtick{position:absolute; bottom:2px; font-size:9.5px; color:var(--muted); transform:translateX(-50%); white-space:nowrap;}
   .mmgrid{position:absolute; top:0; bottom:12px; width:1px; background:var(--grid);}
   .mmaxis{position:absolute; left:0; right:0; height:1px; background:var(--baseline);}
@@ -349,10 +368,11 @@
   #backdrop.show{opacity:1; pointer-events:auto;}
   @media (min-width:761px){ #backdrop{display:none;} }
   #panel{
-    position:fixed; top:0; right:0; bottom:0; width:min(430px, 94vw);
+    position:fixed; top:0; right:0; bottom:0; width:min(446px, 94vw);
     background:var(--panel-bg); border-left:1px solid var(--ring);
-    box-shadow:-8px 0 24px rgba(0,0,0,.14);
-    transform:translateX(105%); transition:transform .22s ease;
+    box-shadow:-14px 0 40px -12px rgba(24,22,18,.26);
+    transform:translateX(105%);
+    transition:transform .3s cubic-bezier(.22,.9,.28,1);
     z-index:60; display:flex; flex-direction:column;
   }
   #panel.open{transform:translateX(0);}
@@ -374,7 +394,16 @@
     margin-left:auto; border:none; background:none; color:var(--muted);
     font-size:20px; cursor:pointer; padding:2px 6px;
   }
-  #panel .pbody{padding:14px 18px 28px; overflow-y:auto; font-size:13.5px; line-height:1.65;}
+  #panel .pbody{padding:16px 18px 30px; overflow-y:auto; font-size:13.5px; line-height:1.7; scroll-behavior:smooth;}
+  #panel .pbody::-webkit-scrollbar{width:9px;}
+  #panel .pbody::-webkit-scrollbar-thumb{background:var(--baseline); border-radius:5px; border:2px solid var(--panel-bg);}
+  #panel .pbody::-webkit-scrollbar-track{background:transparent;}
+  #panel.open .pbody > *{animation:riseIn .34s cubic-bezier(.22,.9,.28,1) both;}
+  @keyframes riseIn{from{opacity:0; transform:translateY(7px);} to{opacity:1; transform:none;}}
+  @media (prefers-reduced-motion: reduce){
+    #panel.open .pbody > *{animation:none;}
+    .cappulse{animation:none;}
+  }
   #panel h3{
     display:flex; align-items:center; gap:9px;
     font-size:12px; color:var(--muted); font-weight:700; margin:18px 0 8px; letter-spacing:.06em;
@@ -392,19 +421,53 @@
   /* 地图 */
   .mapbox{
     position:relative;
-    border:1px solid var(--ring); border-radius:8px; overflow:hidden;
+    border:1px solid var(--ring); border-radius:12px; overflow:hidden;
     background:var(--sea); margin-top:10px;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), 0 4px 14px -6px rgba(0,0,0,.22);
   }
-  .mapbox svg{display:block; width:100%; height:225px; touch-action:none; cursor:grab;}
+  .mapbox svg{display:block; width:100%; height:250px; touch-action:none; cursor:grab;}
   .mapbox svg:active{cursor:grabbing;}
-  .mapbtns{position:absolute; top:6px; right:6px; display:flex; flex-direction:column; gap:4px;}
+  .mapbtns{position:absolute; top:8px; right:8px; display:flex; flex-direction:column; gap:5px;}
   .mapbtns button{
-    width:28px; height:28px; border-radius:7px;
-    border:1px solid var(--ring); background:var(--panel-bg); color:var(--ink);
-    cursor:pointer; font-size:14px; line-height:1; padding:0;
-    box-shadow:0 1px 4px rgba(0,0,0,.12);
+    width:30px; height:30px; border-radius:9px;
+    border:1px solid var(--ring);
+    background:color-mix(in srgb, var(--panel-bg) 85%, transparent);
+    backdrop-filter:blur(6px);
+    color:var(--ink); cursor:pointer; font-size:14px; line-height:1; padding:0;
+    box-shadow:0 2px 6px rgba(0,0,0,.16);
+    transition:transform .12s, border-color .12s;
   }
-  .mapbtns button:hover{border-color:var(--muted);}
+  .mapbtns button:hover{border-color:var(--muted); transform:scale(1.08);}
+  .maptitle{
+    position:absolute; top:8px; left:8px;
+    display:flex; align-items:center; gap:6px;
+    padding:4px 11px; border-radius:999px;
+    background:color-mix(in srgb, var(--panel-bg) 82%, transparent);
+    backdrop-filter:blur(6px);
+    border:1px solid var(--ring);
+    font-size:11px; font-weight:700; color:var(--ink);
+    box-shadow:0 1px 4px rgba(0,0,0,.14);
+    pointer-events:none; max-width:70%;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .maptitle i{width:9px; height:9px; border-radius:3px; flex:none; font-style:normal;}
+  .mapnorth{
+    position:absolute; left:8px; bottom:8px;
+    width:27px; height:27px; border-radius:50%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:color-mix(in srgb, var(--panel-bg) 80%, transparent);
+    backdrop-filter:blur(4px);
+    border:1px solid var(--ring);
+    font-size:9.5px; font-weight:800; color:var(--ink2); line-height:1.05;
+    pointer-events:none;
+  }
+  .mapnorth::before{content:'▲'; font-size:7px; color:var(--c-china);}
+  .cappulse{transform-box:fill-box; transform-origin:center; animation:mappulse 2.4s ease-out infinite;}
+  @keyframes mappulse{
+    0%{transform:scale(1); opacity:.75;}
+    70%{opacity:.06;}
+    100%{transform:scale(3.4); opacity:0;}
+  }
   .mapcap{font-size:11.5px; color:var(--muted); margin:6px 2px 0; line-height:1.55;}
   .mapcap .capdot{
     display:inline-block; width:8px; height:8px; border-radius:50%;
@@ -414,11 +477,17 @@
   .plist{display:flex; flex-direction:column; gap:6px;}
   .prow{
     display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 8px;
-    padding:6px 10px; border-radius:8px;
-    background:color-mix(in srgb, var(--ink) 4%, var(--panel-bg));
+    padding:8px 11px; border-radius:9px;
+    background:color-mix(in srgb, var(--ink) 3.5%, var(--panel-bg));
     border:1px solid var(--ring);
+    transition:border-color .14s, background .14s, transform .14s;
   }
-  .prow .pn{font-weight:600; font-size:13.5px;}
+  .prow:hover{
+    border-color:color-mix(in srgb, var(--acc, var(--muted)) 40%, transparent);
+    background:color-mix(in srgb, var(--acc, var(--muted)) 6%, var(--panel-bg));
+    transform:translateX(2px);
+  }
+  .prow .pn{font-weight:650; font-size:13.5px;}
   .prow .pt{font-size:12px; color:var(--ink2);}
   .prow.minor{background:transparent;}
   .prow.minor .pn{font-weight:400; font-size:12.5px;}
@@ -435,32 +504,47 @@
   .pfold .prow{margin-top:6px;}
   .rnote{font-size:11.5px; color:var(--muted); margin-top:7px; line-height:1.5;}
   /* 名人出生序列表 */
-  .flist{display:flex; flex-direction:column; gap:2px;}
-  .frow{display:flex; align-items:baseline; gap:9px; padding:4px 8px; border-radius:6px; font-size:12.5px;}
+  .flist{display:flex; flex-direction:column; gap:3px;}
+  .frow{
+    display:flex; align-items:baseline; gap:10px;
+    padding:6px 9px; border-radius:8px; font-size:12.5px;
+    border:1px solid transparent;
+    transition:background .14s, border-color .14s, transform .14s;
+  }
   .frow:nth-child(odd){background:color-mix(in srgb, var(--ink) 3%, transparent);}
-  .frow .fyr{flex:none; min-width:98px; text-align:right; color:var(--muted); font-size:11.5px; font-variant-numeric:tabular-nums;}
-  .frow b{font-weight:600;}
+  .frow:hover{
+    background:color-mix(in srgb, var(--acc, var(--muted)) 8%, transparent);
+    border-color:color-mix(in srgb, var(--acc, var(--muted)) 26%, transparent);
+    transform:translateX(2px);
+  }
+  .frow .fyr{
+    flex:none; min-width:98px; text-align:right; font-size:11px;
+    color:var(--muted); font-variant-numeric:tabular-nums; letter-spacing:.01em;
+  }
+  .frow b{font-weight:650;}
   .frow .fd{color:var(--ink2); font-size:12px;}
   /* 搜索 */
   .searchbox{position:relative; margin-left:auto; flex:0 1 340px;}
   .searchbox input{
     width:100%; height:32px;
-    border:1px solid var(--ring); border-radius:9px;
+    border:1px solid var(--ring); border-radius:10px;
     background:var(--surface); color:var(--ink);
-    padding:0 12px; font-size:13px; outline:none;
-    transition:border-color .12s, box-shadow .12s;
+    padding:0 13px; font-size:13px; outline:none;
+    box-shadow:var(--sh1);
+    transition:border-color .14s, box-shadow .14s;
   }
   .searchbox input:focus{
     border-color:color-mix(in srgb, var(--c-europe) 60%, transparent);
     box-shadow:0 0 0 3px color-mix(in srgb, var(--c-europe) 16%, transparent);
   }
   #sresults{
-    position:absolute; top:38px; right:0; width:min(420px, 92vw);
-    max-height:340px; overflow-y:auto;
-    background:var(--panel-bg); border:1px solid var(--ring); border-radius:10px;
-    box-shadow:0 8px 24px rgba(0,0,0,.2); display:none; z-index:70;
+    position:absolute; top:39px; right:0; width:min(430px, 92vw);
+    max-height:348px; overflow-y:auto;
+    background:var(--panel-bg); border:1px solid var(--ring); border-radius:12px;
+    box-shadow:var(--sh3); display:none; z-index:70;
+    animation:riseIn .2s ease both;
   }
-  .sres{padding:8px 12px; cursor:pointer; border-bottom:1px solid var(--ring); font-size:13px;}
+  .sres{padding:9px 13px; cursor:pointer; border-bottom:1px solid var(--ring); font-size:13px; transition:background .12s;}
   .sres:last-child{border-bottom:none;}
   .sres:hover, .sres.cur{background:color-mix(in srgb, var(--ink) 5%, var(--panel-bg));}
   .sres .sn{font-weight:600;}
@@ -475,29 +559,74 @@
     text-underline-offset:3px;
   }
   .pname:hover{color:var(--acc, var(--ink)); text-decoration-style:solid;}
+  /* 代表作 / 主要贡献 / 名言 */
+  .bioquote{
+    position:relative; margin:12px 0 4px; padding:12px 14px 12px 34px;
+    border-radius:10px; font-size:13.5px; line-height:1.75; font-style:italic;
+    color:var(--ink);
+    background:linear-gradient(135deg,
+      color-mix(in srgb, var(--acc, var(--muted)) 11%, var(--panel-bg)),
+      color-mix(in srgb, var(--acc, var(--muted)) 4%, var(--panel-bg)));
+    border:1px solid color-mix(in srgb, var(--acc, var(--muted)) 26%, transparent);
+  }
+  .bioquote::before{
+    content:'“'; position:absolute; left:9px; top:6px;
+    font-family:Georgia,"Songti SC",serif; font-size:30px; line-height:1;
+    color:color-mix(in srgb, var(--acc, var(--muted)) 55%, transparent);
+  }
+  .worklist{display:flex; flex-direction:column; gap:7px;}
+  .workrow{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:9px 12px; border-radius:9px;
+    background:color-mix(in srgb, var(--ink) 3.5%, var(--panel-bg));
+    border:1px solid var(--ring);
+    border-left:3px solid color-mix(in srgb, var(--acc, var(--muted)) 55%, transparent);
+  }
+  .workrow .wkcat{
+    flex:none; min-width:52px; font-size:11.5px; font-weight:800; letter-spacing:.03em;
+    color:var(--acc, var(--ink2)); padding-top:1px;
+  }
+  .workrow .wktxt{font-size:13px; line-height:1.7; color:var(--ink2);}
+  .workrow .wktxt b{color:var(--ink); font-weight:700;}
   /* 人物履历视图 */
   .backbar{
-    display:inline-flex; align-items:center; gap:4px;
-    cursor:pointer; font-size:13px; font-weight:600;
-    color:var(--acc, var(--ink2)); margin-bottom:10px;
-    padding:5px 12px; border:1px solid var(--ring); border-radius:999px;
-    background:color-mix(in srgb, var(--ink) 3%, var(--panel-bg));
+    display:inline-flex; align-items:center; gap:5px;
+    cursor:pointer; font-size:13px; font-weight:650;
+    color:var(--acc, var(--ink2)); margin-bottom:12px;
+    padding:6px 14px; border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--acc, var(--muted)) 28%, transparent);
+    background:color-mix(in srgb, var(--acc, var(--muted)) 7%, var(--panel-bg));
+    box-shadow:var(--sh1);
+    transition:transform .14s, background .14s;
   }
-  .backbar:hover{border-color:var(--muted);}
-  .biotl{display:flex; flex-direction:column; margin-left:4px;}
+  .backbar:hover{
+    background:color-mix(in srgb, var(--acc, var(--muted)) 13%, var(--panel-bg));
+    transform:translateX(-2px);
+  }
+  .biotl{display:flex; flex-direction:column; margin-left:5px;}
   .biorow{
-    position:relative; display:flex; gap:10px; align-items:baseline;
-    padding:6px 0 6px 16px;
-    border-left:2px solid color-mix(in srgb, var(--acc, var(--muted)) 35%, transparent);
+    position:relative; display:flex; gap:11px; align-items:baseline;
+    padding:8px 8px 8px 17px; border-radius:0 8px 8px 0;
+    border-left:2px solid color-mix(in srgb, var(--acc, var(--muted)) 32%, transparent);
+    transition:background .14s;
   }
+  .biorow:hover{background:color-mix(in srgb, var(--acc, var(--muted)) 6%, transparent);}
   .biorow::before{
-    content:''; position:absolute; left:-4.5px; top:13px;
-    width:7px; height:7px; border-radius:50%;
+    content:''; position:absolute; left:-5px; top:15px;
+    width:8px; height:8px; border-radius:50%;
     background:var(--acc, var(--muted));
-    border:1.5px solid var(--panel-bg);
+    border:2px solid var(--panel-bg);
+    box-shadow:0 0 0 2px color-mix(in srgb, var(--acc, var(--muted)) 18%, transparent);
   }
-  .biorow .bioyr{flex:none; min-width:86px; font-weight:700; font-size:12px; color:var(--ink); font-variant-numeric:tabular-nums;}
-  .biorow .bioev{color:var(--ink2); font-size:13px; line-height:1.65;}
+  .biorow:first-child::before{
+    width:10px; height:10px; left:-6px;
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--acc, var(--muted)) 22%, transparent);
+  }
+  .biorow .bioyr{
+    flex:none; min-width:88px; font-weight:750; font-size:12px;
+    color:var(--ink); font-variant-numeric:tabular-nums; letter-spacing:.01em;
+  }
+  .biorow .bioev{color:var(--ink2); font-size:13px; line-height:1.7;}
   .prow .ptag{
     font-size:11px; color:var(--acc, var(--ink2));
     border:1px solid color-mix(in srgb, var(--acc, var(--muted)) 40%, transparent);
@@ -508,21 +637,22 @@
   .chip{
     background:color-mix(in srgb, var(--ink) 5%, var(--panel-bg));
     border:1px solid var(--ring); border-radius:999px;
-    padding:3px 10px; font-size:12.5px;
+    padding:4px 11px; font-size:12.5px;
   }
   .chip b{font-weight:600;}
   .chip i{font-style:normal; color:var(--muted); font-size:11.5px; margin-left:5px;}
   /* 详述分节 */
-  .sec{margin:0 0 9px;}
+  .sec{margin:0 0 11px; line-height:1.75;}
   .sec b{
-    display:inline-block; font-size:11.5px; font-weight:700;
+    display:inline-block; font-size:11.5px; font-weight:750;
     color:var(--acc, var(--ink2));
-    border:1px solid color-mix(in srgb, var(--acc, var(--muted)) 40%, transparent);
-    border-radius:5px; padding:0 6px; margin-right:7px;
+    background:color-mix(in srgb, var(--acc, var(--muted)) 9%, transparent);
+    border:1px solid color-mix(in srgb, var(--acc, var(--muted)) 34%, transparent);
+    border-radius:6px; padding:1px 7px; margin-right:8px;
     vertical-align:1px;
   }
   .sec span{color:var(--ink2);}
-  footer{padding:6px 24px 18px; font-size:12px; color:var(--muted);}
+  footer{padding:7px 24px 18px; font-size:11.5px; color:var(--muted); line-height:1.6;}
   /* ===== 移动端：竖版 + 底部抽屉 ===== */
   @media (max-width:760px){
     .appbar{padding:8px 10px 8px calc(10px + env(safe-area-inset-left)); gap:7px;}
@@ -540,7 +670,6 @@
     .searchbox{flex:1 1 130px; min-width:110px; margin-left:2px;}
     .searchbox input{width:100%; font-size:16px;}
     #btnHelp, .seg .lvl, .brandtxt{display:none;}
-    #vwrap{display:flex;}
     .vhead{padding:0 12px 6px; font-size:11px;}
     #vscroll{margin:0 6px 6px;}
     footer{
@@ -594,8 +723,6 @@
     <button id="zin" title="放大">＋</button>
   </div>
   <div class="tools">
-    <button class="iconbtn" id="btnDesk" style="display:none" title="在电脑版与手机版之间切换">手机版</button>
-    <button class="iconbtn" id="btnOrient" title="切换横版 / 竖版">竖版</button>
     <div class="popwrap">
       <button class="iconbtn" id="btnLegend">图例</button>
       <div class="popover" id="popLegend"><h4>文明分区</h4><div class="legend" id="legend"></div></div>
@@ -3263,10 +3390,14 @@ function applyView(){
   set('mgrat','stroke-width',h*0.0012);
   set('mland','stroke-width',h*0.0015);
   set('mbord','stroke-width',h*0.0013);
-  set('mter','stroke-width',h*0.005);
+  set('mter','stroke-width',h*0.004);
+  set('flandsh','stdDeviation',h*0.004);
+  set('ftersh','stdDeviation',h*0.009);
   MAP.capPts.forEach((c,i)=>{
     const ci = svg.querySelector(`[data-ci="${i}"]`), ti = svg.querySelector(`[data-ti="${i}"]`);
     if(!ci||!ti) return;
+    const cp = svg.querySelector(`[data-cp="${i}"]`);
+    if(cp){ cp.setAttribute('r', r*1.15); cp.setAttribute('stroke-width', r*0.4); }
     ci.setAttribute('r',r); ci.setAttribute('stroke-width',r*0.55);
     const anchor = c[0] > x0+w*0.62 ? 'end' : 'start';
     ti.setAttribute('x', anchor==='end' ? c[0]-r*2 : c[0]+r*2);
@@ -3276,7 +3407,7 @@ function applyView(){
     ti.setAttribute('stroke-width', fs*0.16);
   });
 }
-function renderMap(geo, color){
+function renderMap(geo, color, title){
   const box = document.getElementById('mapbox');
   if(!box) return;
   const ring = (typeof geo.ter === 'string' ? TER[geo.ter] : geo.ter) || [];
@@ -3296,14 +3427,33 @@ function renderMap(geo, color){
   const poly = pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
   box.innerHTML =
     `<svg id="mapsvg" preserveAspectRatio="xMidYMid slice">`+
-    `<rect x="-300" y="-200" width="2040" height="1120" fill="var(--sea)"/>`+
-    `<path id="mgrat" d="${GRAT}" fill="none" stroke="var(--grid)" stroke-opacity="0.7"/>`+
-    `<path id="mland" d="${LAND_PATH}" fill="var(--land)" stroke="var(--baseline)"/>`+
-    `<path id="mbord" d="${BORDER_PATH}" fill="none" stroke="var(--muted)" stroke-opacity="0.35"/>`+
-    (poly?`<polygon id="mter" points="${poly}" fill="${color}" fill-opacity="0.30" stroke="${color}" stroke-linejoin="round"/>`:'')+
-    capPts.map((c,i)=>`<circle data-ci="${i}" cx="${c[0]}" cy="${c[1]}" fill="${color}" stroke="var(--panel-bg)"/>`+
+    `<defs>`+
+      `<linearGradient id="gsea" x1="0" y1="0" x2="0" y2="1">`+
+        `<stop offset="0" stop-color="var(--sea)"/><stop offset="1" stop-color="var(--sea2)"/>`+
+      `</linearGradient>`+
+      `<linearGradient id="gter" x1="0" y1="0" x2="0" y2="1">`+
+        `<stop offset="0" stop-color="${color}" stop-opacity="0.46"/>`+
+        `<stop offset="1" stop-color="${color}" stop-opacity="0.20"/>`+
+      `</linearGradient>`+
+      `<filter id="fland" x="-5%" y="-5%" width="110%" height="110%">`+
+        `<feDropShadow id="flandsh" dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.30"/>`+
+      `</filter>`+
+      `<filter id="fter" x="-40%" y="-40%" width="180%" height="180%">`+
+        `<feDropShadow id="ftersh" dx="0" dy="0" stdDeviation="5" flood-color="${color}" flood-opacity="0.5"/>`+
+      `</filter>`+
+    `</defs>`+
+    `<rect x="-300" y="-200" width="2040" height="1120" fill="url(#gsea)"/>`+
+    `<path id="mgrat" d="${GRAT}" fill="none" stroke="var(--grid)" stroke-opacity="0.55"/>`+
+    `<path id="mland" d="${LAND_PATH}" fill="var(--land)" stroke="var(--coast)" filter="url(#fland)"/>`+
+    `<path id="mbord" d="${BORDER_PATH}" fill="none" stroke="var(--muted)" stroke-opacity="0.3"/>`+
+    (poly?`<polygon id="mter" points="${poly}" fill="url(#gter)" stroke="${color}" stroke-linejoin="round" filter="url(#fter)"/>`:'')+
+    capPts.map((c,i)=>
+      `<circle class="cappulse" data-cp="${i}" cx="${c[0]}" cy="${c[1]}" fill="none" stroke="${color}"/>`+
+      `<circle data-ci="${i}" cx="${c[0]}" cy="${c[1]}" fill="${color}" stroke="var(--panel-bg)"/>`+
       `<text data-ti="${i}" font-weight="600" fill="var(--ink)" stroke="var(--panel-bg)" paint-order="stroke">${c[2]}</text>`).join('')+
     `</svg>`+
+    (title ? `<div class="maptitle"><i style="background:${color}"></i>${title} · 盛期版图</div>` : '')+
+    `<div class="mapnorth">N</div>`+
     `<div class="mapbtns">`+
     `<button data-mz="in" title="放大">＋</button>`+
     `<button data-mz="out" title="缩小">−</button>`+
@@ -3360,6 +3510,1503 @@ function renderMap(geo, color){
   svg.addEventListener('pointerup', ptrUp);
   svg.addEventListener('pointercancel', ptrUp);
 }
+
+/* ============ 百科补充：逸闻 · 评价 · 增补人物（运行时与主数据合并） ============ */
+const EXTRA = {
+/* ---------- 中国 ---------- */
+'传说时代（三皇五帝）':{
+ f:[['后稷','传说 · 周人始祖·教民稼穑'],['杜康','传说 · 酿酒始祖']],
+ s:[['逸闻','大禹治水十三年三过家门而不入，以疏代堵；尧舜禹禅让的记忆成为后世"天下为公"的理想原型。'],
+    ['评价','虽无当时文字自证，但陶寺、石峁等超大型史前城址不断出土，传说时代正被考古一点点"落地"，它是华夏认同最深处的源代码。']]},
+'夏':{
+ f:[['女艾','少康部下 · 中国史载最早的间谍'],['羿与寒浞','传说 · 代夏乱政四十年']],
+ s:[['逸闻','太康耽于游猎失国，少康流亡中以一旅之众复国，史称"少康中兴"——中国第一个王朝复兴故事。'],
+    ['评价','夏的存在虽尚待文字实证，但二里头遗址的宫城、青铜爵与绿松石龙已勾勒出一个广域王权的轮廓，"最早的中国"呼之欲出。']]},
+'商':{
+ f:[['傅说','武丁贤相 · 版筑奴隶拜相传奇'],['妲己','传说 · 亡国之祸的符号化身']],
+ s:[['逸闻','武丁"梦得圣人"，在筑墙奴隶中找到傅说拜为国相；妇好既主持祭祀又统兵万人伐羌，是甲骨文里最耀眼的王后。'],
+    ['评价','甲骨文让商成为中国第一个信史王朝；司母戊鼎、四羊方尊代表的青铜铸造至今令人惊叹——神权、王权与文字在此第一次拧成一股。']]},
+'西周':{
+ f:[['伯夷·叔齐','商遗民 · 不食周粟饿死首阳山'],['褒姒','幽王宠妃 · 烽火戏诸侯传说']],
+ s:[['逸闻','前841年国人暴动赶走厉王，周召二公共和行政——中国有确切纪年自此开始；幽王为博褒姒一笑烽火戏诸侯的故事则为亡国留下最著名的寓言。'],
+    ['评价','封建、宗法、礼乐三位一体的周制是此后三千年中国政治伦理的底稿，孔子一生的理想不过四个字：郁郁乎文哉，吾从周。']]},
+'春秋':{
+ f:[['晏婴','约前578—前500 · 二桃杀三士·使楚不辱'],['子产','？—前522 · 铸刑书·中国最早公布成文法'],['伍子胥','？—前484 · 掘墓鞭尸·忠谏沉江'],['西施','生卒不详 · 沼吴的传奇美人']],
+ s:[['逸闻','退避三舍、一鸣惊人、卧薪尝胆、唇亡齿寒——今天汉语里三分之一的成语出自这三百年；孔子周游列国如"丧家之犬"却弦歌不辍。'],
+    ['评价','礼崩乐坏的另一面是思想解放的序幕：私学兴起、士人登场，中国轴心时代由此开启，与希腊哲人隔着大陆遥相呼应。']]},
+'战国':{
+ f:[['苏秦·张仪','纵横家 · 合纵连横舌卷天下'],['孙膑','军事家 · 围魏救赵·马陵道杀庞涓'],['蔺相如','赵国上卿 · 完璧归赵·将相和'],['李冰','蜀郡太守 · 都江堰泽被成都平原至今'],['荆轲','？—前227 · 风萧萧兮易水寒']],
+ s:[['逸闻','稷下学宫百家云集，"不治而议论"；长平一战赵卒四十万被坑，荆轲图穷匕见——理想与残酷在这个时代都推到极致。'],
+    ['评价','变法、郡县、编户齐民在七国竞争中锻造出中央集权的原型；百家争鸣则一次性供给了此后两千年几乎所有的思想选项。']]},
+'秦':{
+ f:[['项羽','前232—前202 · 巨鹿破釜沉舟·西楚霸王'],['徐福','方士 · 携三千童男女东渡求仙'],['孟姜女','传说 · 哭长城的民间记忆']],
+ s:[['逸闻','始皇五次东巡刻石颂德，求长生而死于沙丘；赵高指鹿为马测忠奸；陈胜一句"王侯将相宁有种乎"点燃第一次全国性起义。'],
+    ['评价','"百代都行秦政法"——朝代十五年而亡，郡县、文字、度量衡的统一却成为此后所有王朝的出厂设置；兵马俑则让世界看见了它的组织能力。']]},
+'西汉':{
+ f:[['苏武','前140—前60 · 持节牧羊十九年'],['李广','？—前119 · 飞将军·桃李不言'],['东方朔','前154—前93 · 滑稽之雄·大隐于朝'],['司马相如·卓文君','汉赋首席与当垆卖酒的私奔佳话'],['霍光','？—前68 · 废立皇帝的权臣典范']],
+ s:[['逸闻','鸿门宴上项庄舞剑，四面楚歌霸王别姬；文景两代仓廪陈陈相因、串钱的绳子都朽了；张骞两度出使，凿空西域。'],
+    ['评价','汉承秦制而济之以儒，帝国模式自此定型；"汉人、汉字、汉语"——一个朝代的名字成为一个民族永远的自称。']]},
+'新':{
+ s:[['逸闻','王莽篡汉前谦恭俭让、声望满天下，"周公恐惧流言日，王莽谦恭未篡时"；改制中土地国有、五均六筦、货币四改，被今人戏称"穿越者"。'],
+    ['评价','一场以儒家经典为蓝图的激进社会实验，理想主义碰上执行灾难，绿林赤眉四起，十五年而亡——它证明了复古不能解决现实。']]},
+'东汉':{
+ f:[['王充','27—约97 · 《论衡》疾虚妄'],['马援','前14—49 · 马革裹尸·老当益壮'],['窦宪','？—92 · 燕然勒石破北匈奴'],['郑玄','127—200 · 遍注群经·经学集大成']],
+ s:[['逸闻','光武帝"柔道治国"，功臣皆保全首领；强项令董宣当面顶撞公主不低头；党锢之祸中李膺范滂慷慨赴死，太学生三万人为之请愿。'],
+    ['评价','豪族与经学共同支撑的王朝：蔡伦纸、张衡地动仪、《伤寒杂病论》皆出于此；而外戚宦官的死循环也为后世写下最完整的反面教材。']]},
+'三国':{
+ f:[['吕布','？—199 · 人中吕布马中赤兔'],['貂蝉','演义人物 · 连环计'],['陆逊','183—245 · 夷陵火烧连营'],['吕蒙','178—220 · 士别三日刮目相看'],['姜维','202—264 · 九伐中原·殉国成都']],
+ s:[['逸闻','三顾茅庐与隆中对；关羽刮骨疗毒谈笑自若；曹操"宁我负人"与"周公吐哺"并存一身——史实与演义在此难分难解。'],
+    ['评价','汉末人口锐减大半的至暗乱世，却因陈寿一部《三国志》与罗贯中一部演义，成为东亚共同的英雄叙事母题，影响远及日韩的戏剧与游戏。']]},
+'西晋':{
+ f:[['嵇康','224—263 · 竹林七贤·广陵散绝'],['阮籍','210—263 · 青白眼·穷途之哭'],['石崇','249—300 · 与国舅斗富的巨豪']],
+ s:[['逸闻','石崇王恺斗富，蜡烛当柴珊瑚随手砸；惠帝闻百姓饿死问"何不食肉糜"；八王之乱同室操戈十六年，引来五胡入华。'],
+    ['评价','门阀奢靡与清谈误国的标本；但竹林名士的风骨与《三都赋》的洛阳纸贵，也让这个短命王朝在文化史上留下了体面。']]},
+'东晋':{
+ f:[['王导','276—339 · 王与马共天下'],['葛洪','283—343 · 《抱朴子》·青蒿治疟的最早记载'],['慧远','334—416 · 庐山结社·净土宗初祖']],
+ s:[['逸闻','新亭对泣后王导一句"当共戮力王室"振起士气；淝水之战八万北府兵破苻坚百万，留下风声鹤唳草木皆兵；兰亭雅集曲水流觞成千古风流。'],
+    ['评价','政治上"王与马共天下"的门阀共治独一无二；文化上书圣、田园诗祖、山水画祖同出一朝——偏安江左却完成了中国审美的一次定调。']]},
+'南北朝':{
+ f:[['谢灵运','385—433 · 山水诗开山·才高一斗'],['昙曜','北魏高僧 · 主持开凿云冈五窟'],['兰陵王高长恭','541—573 · 戴面具冲阵的美男名将']],
+ s:[['逸闻','孝文帝迁都洛阳令鲜卑改汉姓说汉语，自己带头改姓元；梁武帝四次舍身同泰寺让大臣花亿万钱赎回；《木兰辞》与《敕勒歌》一南一北传唱至今。'],
+    ['评价','三百年分裂恰是民族与文明的大熔炉：胡人汉化、汉人胡食，佛教在云冈龙门的斧凿声中完成中国化——隋唐盛世的全部原料在此备齐。']]},
+'隋':{
+ f:[['宇文恺','555—612 · 规划大兴城·世界最大都城设计师'],['刘焯','544—610 · 《皇极历》定岁差']],
+ s:[['逸闻','文帝节俭到宫中妃嫔不施粉黛，却给儿子留下史上最满的粮仓——含嘉仓的存粮唐初还没吃完；炀帝乘龙舟下江都，纤夫八万，船队二百里。'],
+    ['评价','与秦惊人对称的王朝：二世而亡，留下的科举与大运河却运转千年——一个选拔人才的软件，一条贯通南北的硬件。']]},
+'唐':{
+ f:[['柳宗元','773—819 · 永州八记·古文运动'],['李靖','571—649 · 灭东突厥·军神'],['上官婉儿','664—710 · 巾帼宰相'],['陆羽','733—804 · 《茶经》·茶圣'],['僧一行','683—727 · 实测子午线第一人']],
+ s:[['逸闻','太宗纵四百死囚归家过年，次年秋全部按期返狱受刑，遂尽赦之；李白让高力士脱靴的传说、玄宗与贵妃的霓裳羽衣，与马嵬驿的白绫同属一个盛世的两面。'],
+    ['评价','长安城中胡商、遣唐使、景教僧侣杂处，科举给了寒门向上的通道——一个真正意义上的世界帝国。唐之后，海外华人聚居地至今仍叫"唐人街"。']]},
+'五代十国':{
+ f:[['钱镠','852—932 · 吴越保境安民·陌上花开缓缓归'],['韩熙载','902—970 · 夜宴图的主角'],['顾闳中','南唐画院 · 《韩熙载夜宴图》作者']],
+ s:[['逸闻','石敬瑭认小自己十岁的契丹主为父，割燕云十六州做"儿皇帝"；花蕊夫人亡国诗"十四万人齐解甲，更无一个是男儿"传诵千年。'],
+    ['评价','武人轮流坐庄的乱局逼出了宋代"重文抑武"的矫枉过正；而南方十国的安定则悄悄完成了经济重心南移的最后一程。']]},
+'北宋':{
+ f:[['寇准','961—1023 · 澶渊之盟力主亲征'],['柳永','约984—1053 · 凡有井水处皆歌柳词'],['米芾','1051—1107 · 米颠拜石·宋四家'],['程颢·程颐','理学奠基的二程兄弟'],['杨业','？—986 · 杨家将原型·血战陈家谷']],
+ s:[['逸闻','太祖一顿酒释了兵权；澶渊之盟前真宗想南逃，寇准逼他亲征城头一站而胜；苏轼因乌台诗案几死，贬到黄州反而写出前后《赤壁赋》。'],
+    ['评价','陈寅恪断言：华夏文化"历数千载之演进，造极于赵宋之世"。经济、科技、文艺全面登顶，军事短板则是它付出的代价。']]},
+'南宋':{
+ f:[['虞允文','1110—1174 · 采石矶书生退金军'],['韩世忠·梁红玉','黄天荡围金兀术·夫人击鼓战金山'],['姜夔','约1155—1221 · 白石道人·自度曲']],
+ s:[['逸闻','岳飞背刺"尽忠报国"，朱仙镇大捷后被十二道金牌召回；崖山之战陆秀夫背着八岁幼帝跳海，十万军民相随蹈海——一个王朝最悲壮的谢幕。'],
+    ['评价','军事上称臣纳贡，经济上却是当时全球最富庶的政权，市舶司的关税撑起半个国库；朱子理学与放翁稼轩的爱国诗词，都是这种撕裂的产物。']]},
+'元':{
+ f:[['黄道婆','约1245—1330 · 革新棉纺·衣被天下'],['王实甫','元曲 · 《西厢记》愿天下有情人终成眷属'],['赵孟頫','1254—1322 · 楷书四大家·宋宗室仕元']],
+ s:[['逸闻','忽必烈两征日本皆遇"神风"；马可·波罗自称仕元十七年，其游记让欧洲人第一次对东方财富产生系统性想象，哥伦布的船上就带着一本。'],
+    ['评价','站在草原帝国与中原王朝的接缝上：行省制度、驿站系统、纸币实践影响深远；四等人制的裂痕则让它不足百年而归漠北。']]},
+'明':{
+ f:[['于谦','1398—1457 · 北京保卫战·粉身碎骨浑不怕'],['唐寅','1470—1524 · 江南第一风流才子'],['袁崇焕','1584—1630 · 宁远大捷·冤磔于市'],['罗贯中','约1330—约1400 · 《三国演义》'],['施耐庵','约1296—约1370 · 《水浒传》'],['利玛窦','1552—1610 · 意大利传教士·中西会通第一人']],
+ s:[['逸闻','建文帝下落成为第一悬案；土木堡皇帝被俘，于谦拥立新君死守北京力挽狂澜，夺门之变后反遭冤杀；海瑞买好棺材才上疏骂嘉靖。'],
+    ['评价','郑和七下西洋展示了海权的可能又亲手放弃；晚明江南的市镇、白银经济与《本草纲目》《天工开物》，让"资本主义萌芽"之辩延续至今。']]},
+'清':{
+ f:[['顾炎武','1613—1682 · 天下兴亡匹夫有责'],['黄宗羲','1610—1695 · 《明夷待访录》批君主专制'],['王夫之','1619—1692 · 船山先生·气一元论'],['吴敬梓','1701—1754 · 《儒林外史》'],['和珅','1750—1799 · 史上最巨贪·家产半个国库'],['严复','1854—1921 · 译《天演论》·物竞天择'],['谭嗣同','1865—1898 · 戊戌六君子·我自横刀向天笑']],
+ s:[['逸闻','少年康熙智擒鳌拜；九子夺嫡雍正胜出后设军机处密折治国；乾隆六下江南自诩十全老人，和珅倒台"嘉庆吃饱"；林则徐虎门销烟二十三天。'],
+    ['评价','它奠定了现代中国的版图与多民族框架，《四库全书》与文字狱同出一朝；当马戛尔尼的使团被当作朝贡使打发走时，与工业革命擦肩而过的代价已经注定。']]},
+'中华民国':{
+ f:[['徐悲鸿','1895—1953 · 奔马·中西画法融合'],['林徽因·梁思成','中国古建筑研究的开创者'],['陈寅恪','1890—1969 · 独立之精神自由之思想'],['闻一多','1899—1946 · 《七子之歌》·拍案而起']],
+ s:[['逸闻','五四那天学生火烧赵家楼；西南联大师生徒步三千里入滇，铁皮屋顶下走出两位诺奖得主与一百多位院士——"中邦三十载，西土一千年"。'],
+    ['评价','军阀混战与外敌入侵的夹缝中，完成了从帝制到共和的惊险一跃；新文化运动的白话文、大学与科学社团，是它留给后来者最厚的遗产。']]},
+'中华人民共和国':{
+ f:[['陈景润','1933—1996 · 哥德巴赫猜想(1+2)'],['王选','1937—2006 · 汉字激光照排之父'],['南仁东','1945—2017 · 中国天眼FAST首席科学家']],
+ s:[['逸闻','1964年罗布泊蘑菇云升起时，邓稼先隐姓埋名已六年；1978年小岗村十八户按下红手印分田到户；2003年杨利伟一飞，中国成为第三个独立载人航天的国家。'],
+    ['评价','七十余年从农业国到全球第二大经济体、最完整工业体系的变迁，高铁、航天、脱贫与环境、人口结构的挑战并存——这一条时间轴仍在书写。']]},
+'十六国·前秦等':{
+ f:[['佛图澄','232—348 · 以神异感化石勒石虎的高僧']],
+ s:[['逸闻','苻坚统一北方后不顾王猛遗言南征，号称投鞭断流，淝水一败风声鹤唳，帝国瞬间瓦解——王猛临终"晋不可图"言犹在耳。'],
+    ['评价','五凉四燕三秦二赵一夏轮番登场的试错期：胡人政权学习汉制、佛教借乱世西来东传，北方在血与火中完成第一轮民族重组。']]},
+'辽（契丹）':{
+ f:[['萧绰','953—1009 · 承天太后·澶渊之盟实际决策者']],
+ s:[['逸闻','辽帝四时捺钵、春水秋山，朝廷跟着帐篷走；澶渊之盟后宋辽通使百余年，边境榷场上茶马绢帛川流不息——史上罕见的长和平。'],
+    ['评价','南北面官"以国制治契丹，以汉制待汉人"，首创征服王朝的二元治理；"契丹"一名经丝路西传，至今俄语仍称中国为Китай。']]},
+'西夏（党项）':{
+ f:[['骨勒茂才','西夏学者 · 《番汉合时掌中珠》双语字典']],
+ s:[['逸闻','元昊命野利仁荣创制六千西夏字，笔画繁于汉字却自成体系；黑水城遗址一朝出土，让死文字重新开口说话，催生了一门"西夏学"。'],
+    ['评价','夹在宋辽金蒙之间以战立国、以和存国近两百年，是小政权大战略的教科书；蒙古灭夏之烈，使其历史几成空白，反添神秘。']]},
+'金（女真）':{
+ f:[['完颜宗弼','？—1148 · 金兀术·岳飞的宿敌']],
+ s:[['逸闻','"女真不满万，满万不可敌"——两万骑兵十二年间连灭辽与北宋；海陵王完颜亮读柳永词起投鞭渡江之志，迁都燕京，开启北京的首都史。'],
+    ['评价','猛安谋克的部落军制与全盘汉化的拉扯贯穿始终；世宗"小尧舜"三十年治世表明征服者也能成为好学生，而蒙古铁骑最终让它重演了自己灭辽的剧本。']]},
+'蒙古汗国':{
+ f:[['速不台','1176—1248 · 征服疆域最广的将领'],['拔都','1207—1256 · 长子西征·建金帐汗国'],['旭烈兀','1218—1265 · 西征灭阿拔斯·建伊利汗国']],
+ s:[['逸闻','铁木真幼年丧父、妻子被掳，从零统一草原；长子西征横扫基辅直抵多瑙河；1259年蒙哥暴死钓鱼城下，西征大军回师夺位——一座川东小城改变了世界史走向。'],
+    ['评价','人类史上最大的连片陆地帝国：驿站体系让欧亚商旅"怀金夜行无忧"，马可·波罗与黑死病沿同一条路东来西往——第一次"全球化"的暴烈版本。']]},
+/* ---------- 欧洲 ---------- */
+'米诺斯 · 迈锡尼文明':{
+ f:[['谢里曼','1822—1890 · 凭荷马史诗挖出特洛伊与迈锡尼'],['伊文思','1851—1941 · 发掘克诺索斯"迷宫"']],
+ s:[['逸闻','克诺索斯宫殿千门百室，正是弥诺陶洛斯迷宫传说的原型；十九世纪商人谢里曼捧着《荷马史诗》按图索骥，真挖出了"阿伽门农的黄金面具"。'],
+    ['评价','欧洲最早的文明与最早的文字（线形文字A至今未破译）；其崩溃后希腊陷入四百年黑暗时代，全靠荷马的吟唱把记忆传了下来。']]},
+'古希腊城邦':{
+ f:[['泰勒斯','约前624—前546 · 西方第一位哲学家·预测日食'],['埃斯库罗斯','前525—前456 · 悲剧之父'],['阿里斯托芬','约前446—前386 · 喜剧之父'],['菲狄亚斯','约前480—前430 · 帕特农雅典娜巨像'],['德谟克利特','约前460—前370 · 原子论']],
+ s:[['逸闻','斐迪庇第斯从马拉松跑回雅典报捷后力竭而死，留下一个奥运项目；苏格拉底拒绝越狱、从容饮鸩；第欧根尼对亚历山大只说了一句：请别挡住我的阳光。'],
+    ['评价','公民、投票、悲剧、学院、奥运会——这些词的源头都在这里。它与春秋战国的百家争鸣同处"轴心时代"，人类在东西两端同时学会了系统地思考自己。']]},
+'亚历山大帝国 · 希腊化':{
+ f:[['托勒密一世','约前367—前282 · 继业者·建亚历山大图书馆'],['塞琉古一世','约前358—前281 · 继业者·领亚洲最大版图']],
+ s:[['逸闻','面对无人能解的戈耳狄俄斯之结，亚历山大拔剑斩断；他为战马布西发拉斯建城命名；33岁死于巴比伦，部将问帝国归谁，答曰"归最强者"——随即分裂。'],
+    ['评价','十三年从希腊打到印度河，把希腊语和城市文明撒遍西亚；此后三百年希腊化时代，欧几里得与阿基米德的成果即诞生于它播下的学术温床。']]},
+'罗马共和国':{
+ f:[['格拉古兄弟','前2世纪 · 土地改革双双殒命'],['卢克莱修','约前99—前55 · 《物性论》长诗'],['李维','前59—17 · 《罗马自建城以来史》142卷']],
+ s:[['逸闻','汉尼拔率战象翻越阿尔卑斯，坎尼一役全歼八万罗马军，罗马却拒不求和；凯撒渡卢比孔河时说"骰子已掷下"，四年后倒在元老院四十刀之下，刀手中有他视如己出的布鲁图。'],
+    ['评价','执政官、元老院、保民官相互制衡的混合政体，是美国宪法制定者案头的第一参考；而它亡于军事强人的过程，同样被后世反复引为镜鉴。']]},
+'罗马帝国':{
+ f:[['老普林尼','23—79 · 《博物志》·殉学维苏威'],['普鲁塔克','约46—120 · 《希腊罗马名人传》'],['托勒密','约100—170 · 《天文学大成》地心说体系'],['奥古斯丁','354—430 · 《忏悔录》《上帝之城》']],
+ s:[['逸闻','公元79年维苏威火山一夜封存庞贝，老普林尼为观测火山驾船赴死；五贤帝时代被吉本称为"人类最幸福的时代"；戴克里先退位后拒绝复出：你们该来看看我种的卷心菜。'],
+    ['评价','罗马法、拉丁语、行省制与最终国教化的基督教，构成欧洲文明的四根梁柱；条条大路通罗马不是修辞——八万公里硬面大道两千年后仍有路段在用。']]},
+'拜占庭帝国（东罗马）':{
+ f:[['普罗科匹厄斯','约500—565 · 正史与《秘史》两副笔墨'],['西里尔·美多德','9世纪 · 创斯拉夫字母的传教士兄弟']],
+ s:[['逸闻','尼卡暴动中查士丁尼欲逃，皇后狄奥多拉一句"紫袍是最美的裹尸布"稳住朝局；希腊火喷向阿拉伯舰队，配方保密千年至今成谜；1453年5月29日，君士坦丁十一世脱下紫袍冲入乱军战死。'],
+    ['评价','当西欧沉入中世纪，它把希腊罗马典籍完好保存了一千年；君士坦丁堡陷落后学者携古卷西逃，直接给文艺复兴递了柴——东正教与西里尔字母则是它留给斯拉夫世界的遗产。']]},
+'法兰克王国 · 查理曼帝国':{
+ f:[['艾因哈德','约775—840 · 《查理大帝传》']],
+ s:[['逸闻','800年圣诞弥撒上，教皇利奥三世突然把皇冠戴上查理曼头顶——"罗马人的皇帝"复活了；《罗兰之歌》咏唱的龙塞斯瓦列斯断后战，主角罗兰吹号至太阳穴迸裂。'],
+    ['评价','查理曼被称为"欧洲之父"：他推动的加洛林文艺复兴让修道院抄书房拯救了濒亡的拉丁典籍；843年凡尔登条约三分帝国，法、德、意的雏形就此画下。']]},
+'神圣罗马帝国 · 意大利城邦':{
+ f:[['彼特拉克','1304—1374 · 人文主义之父·桂冠诗人'],['薄伽丘','1313—1375 · 《十日谈》'],['莱布尼茨','1646—1716 · 微积分·二进制']],
+ s:[['逸闻','亨利四世雪地赤足站了三天求教皇赦免（卡诺莎之辱）；美第奇银行家族三代人赞助了从多纳泰罗到米开朗基罗的整个佛罗伦萨；1527年皇帝的雇佣兵洗劫罗马，文艺复兴盛期戛然而止。'],
+    ['评价','伏尔泰讥其"既不神圣，也非罗马，更非帝国"，但正是这个松散躯壳里的自由城邦与诸侯竞争，孵化了文艺复兴、宗教改革、活字印刷与近代科学——欧洲的现代性多半在此发酵。']]},
+'法兰西':{
+ f:[['罗伯斯庇尔','1758—1794 · 雅各宾专政·自己也上了断头台'],['大仲马','1802—1870 · 《三个火枪手》《基督山伯爵》'],['德彪西','1862—1918 · 印象派音乐《月光》']],
+ s:[['逸闻','十七岁的贞德率军解奥尔良之围，两年后被火刑，二十五年后平反，五百年后封圣；路易十四七十二年王座生涯把贵族驯成凡尔赛的舞伴；拿破仑加冕时从教皇手中拿过皇冠自己戴上。'],
+    ['评价','1789年以后，"左派右派""人权宣言""公民"这些词汇从巴黎输出到全世界；此后两百年，几乎每一种现代政治方案都先在法国排练过一遍。']]},
+'英格兰 → 英国':{
+ f:[['乔叟','约1343—1400 · 《坎特伯雷故事集》·英语文学之父'],['库克船长','1728—1779 · 三下太平洋·测绘澳新'],['霍金','1942—2018 · 《时间简史》·黑洞辐射']],
+ s:[['逸闻','1215年贵族持剑逼约翰王在兰尼米德草地签下《大宪章》；亨利八世为离婚另立国教，六位王后两位上了断头台；1688年光荣革命不流血换王，议会从此高于王权。'],
+    ['评价','议会主权、普通法、中央银行加上第一次工业革命——现代世界的操作系统有一半是英国写的；日不落帝国的另一面，是鸦片战争与殖民账本上的阴影。']]},
+'西班牙':{
+ f:[['科尔特斯','1485—1547 · 六百人灭阿兹特克'],['皮萨罗','约1475—1541 · 一百八十人擒印加皇帝'],['委拉斯开兹','1599—1660 · 《宫娥》'],['高迪','1852—1926 · 圣家堂·上帝的建筑师']],
+ s:[['逸闻','1492年一年之内：光复格拉纳达、驱逐犹太人、哥伦布扬帆——三件事同时改写世界；波托西银山的白银经马尼拉大帆船流入明朝，间接推动了张居正的一条鞭法。'],
+    ['评价','史上第一个"日不落"帝国，黄金世纪的绘画与《堂吉诃德》至今是西语世界的骄傲；但银河般涌入的财富未能转化为生产力，帝国在通胀与战争中缓缓沉没。']]},
+'俄罗斯（沙俄）':{
+ f:[['罗蒙诺索夫','1711—1765 · 渔家子创莫斯科大学'],['屠格涅夫','1818—1883 · 《父与子》《猎人笔记》']],
+ s:[['逸闻','彼得大帝化名下士随使团赴荷兰英国学造船，回国亲手剪掉贵族的大胡子；1812年库图佐夫弃守莫斯科，一场大火加严冬吞掉拿破仑六十万大军。'],
+    ['评价','三百年从莫斯科公国扩张成横跨欧亚的最大陆上帝国；十九世纪的文学黄金时代——普希金到托尔斯泰——让世界透过小说理解了"俄罗斯灵魂"。']]},
+'苏联 → 俄罗斯':{
+ f:[['朱可夫','1896—1974 · 从莫斯科反攻到攻克柏林'],['帕斯捷尔纳克','1890—1960 · 《日瓦戈医生》·被迫拒领诺奖'],['索尔仁尼琴','1918—2008 · 《古拉格群岛》']],
+ s:[['逸闻','1961年加加林108分钟绕地球一圈，落地后说"地球是蓝色的"；1962年古巴导弹危机十三天，人类离核战争最近的一次；1991年12月25日，克里姆林宫红旗降下。'],
+    ['评价','以极高代价完成工业化并承担了反法西斯战争最沉重的伤亡，又以卫星与宇航员开启太空时代；其兴其亡，是二十世纪最大的制度实验与最大的教训。']]},
+/* ---------- 两河 · 波斯 · 中东 ---------- */
+'苏美尔城邦':{
+ s:[['逸闻','吉尔伽美什为挚友之死踏上寻求永生之旅，最终领悟凡人当珍惜当下——人类第一部史诗写的已是终极问题；出土泥板里还有最早的学生作业和"逃学挨打"的记录。'],
+    ['评价','文字、车轮、犁、啤酒、学校、合同、历法……克莱默的书名说尽一切：《历史始于苏美尔》。']]},
+'阿卡德帝国':{
+ s:[['逸闻','萨尔贡自述是弃婴，装在涂沥青的篮子里顺河漂流被园丁收养——比摩西的故事早了一千年；其女恩赫杜安娜是人类历史上第一位留下署名的作者。'],
+    ['评价','世界上第一个"帝国"：多城邦、多民族、常备军与中央任命的总督，此后所有帝国的基本零件它都用过了。']]},
+'古巴比伦':{
+ s:[['逸闻','汉谟拉比法典石柱顶端刻着太阳神授法于王的浮雕，282条里"以眼还眼、以牙还牙"最为后世熟知；出土的王室书信显示这位大帝亲自过问运河清淤和小吏贪腐。'],
+    ['评价','把公正刻在石头上公之于众，是法治史的第一座里程碑；巴比伦数学的60进制，就藏在你手表的分针与量角器的刻度里。']]},
+'赫梯帝国':{
+ s:[['逸闻','卡叠什大战后赫梯与埃及签订现存最早的国际和约，银板互换、互不侵犯、引渡逃犯一应俱全——联合国总部墙上挂着它的复制品。'],
+    ['评价','最早留下文字的印欧语民族、青铜时代国际体系的一极；其冶铁技术随帝国崩溃扩散，无意中把世界推进了铁器时代。']]},
+'亚述帝国':{
+ s:[['逸闻','亚述巴尼拔自夸能读苏美尔天书，他的尼尼微图书馆藏泥板三万块——《吉尔伽美什史诗》正是从这里的灰烬中复活的；宫殿浮雕上的垂死母狮至今被奉为古代艺术巅峰。'],
+    ['评价','铁器、攻城锤、驿传与人口迁徙政策组成的战争机器，建立了第一个横跨两河与埃及的大帝国；也因纯以恐怖维系，亡时"人人拍手称快"（《圣经·那鸿书》）。']]},
+'新巴比伦':{
+ s:[['逸闻','尼布甲尼撒二世为思乡的米底王后叠起阶梯花园，是为"空中花园"；《圣经》里伯沙撒王宴饮时墙上显现神秘手书，当夜城破——"墙上的字"从此成为西方谚语。'],
+    ['评价','最后的两河辉煌：伊什塔尔门的蓝釉砖狮现存柏林博物馆岛；"巴比伦之囚"则深刻塑造了犹太教，间接影响了后来的基督教与伊斯兰教。']]},
+'波斯 · 阿契美尼德王朝':{
+ s:[['逸闻','居鲁士释放巴比伦之囚让犹太人回乡建殿，居鲁士圆柱因此被称为最早的人权宣言；大流士在贝希斯敦崖壁刻下三语铭文，两千年后成为破译楔形文字的钥匙。'],
+    ['评价','从印度河到爱琴海，第一个真正意义的世界帝国：行省、御道、驿传加宗教宽容的组合拳，比罗马早了五百年——波斯波利斯的百柱大厅是它的纪念碑。']]},
+'帕提亚（安息）':{
+ s:[['逸闻','前53年卡莱之战，帕提亚铁甲骑兵与"回马箭"全歼克拉苏七个军团，罗马军旗一说首次让西方人见到了丝绸的反光；《史记》载安息王以两万骑迎汉使，献大鸟卵与魔术师。'],
+    ['评价','挡住罗马东扩四百年的骑射帝国，也是丝绸之路的中段收费站——汉与罗马终其世未能直接握手，利润都进了安息人的口袋。']]},
+'萨珊波斯':{
+ s:[['逸闻','沙普尔一世在埃德萨活捉罗马皇帝瓦勒良，摩崖浮雕上皇帝跪伏为其踏脚上马；泰西封的塔克基思拉拱门跨度37米，至今仍是世界最大的无筋砖拱。'],
+    ['评价','琐罗亚斯德教的国教时代与波斯文化的定型期；与拜占庭四百年拉锯两败俱伤，让阿拉伯人捡了个帝国——而其行政制度被哈里发们全盘接收。']]},
+'阿拉伯帝国（倭马亚 · 阿拔斯）':{
+ f:[['比鲁尼','973—1048 · 测算地球半径误差不足百分之一']],
+ s:[['逸闻','智慧宫的百年翻译运动传说按译稿重量付黄金，希腊典籍借阿拉伯文死里逃生；751年怛罗斯之战被俘的唐军工匠把造纸术带到撒马尔罕，五百年后传入欧洲。'],
+    ['评价','代数（algebra）、算法（algorithm）、酒精（alcohol）——这些词都是阿拉伯学者的签名；《一千零一夜》里的巴格达，当时确是全球最大最富的城市之一。']]},
+'奥斯曼帝国':{
+ f:[['许蕾姆苏丹','约1504—1558 · 从女奴到皇后·左右朝政'],['埃夫利亚·切莱比','1611—1682 · 四十年游记《旅行之书》']],
+ s:[['逸闻','1453年攻君士坦丁堡，乌尔班巨炮轰墙、七十条战船一夜翻山入金角湾；苏莱曼大帝的立法典章让欧洲人称他"壮丽者"，其宠后许蕾姆的宫斗则衍生出无数文艺作品。'],
+    ['评价','横跨欧亚非六百年，掐住东西商路咽喉，倒逼欧洲人绕海路远航——大航海时代竟是它间接催生；一战后帝国解体，现代中东的几乎每条边界与每个难题都与此有关。']]},
+/* ---------- 埃及 · 非洲 ---------- */
+'埃及早王朝 · 古王国':{
+ s:[['逸闻','纳尔迈调色板上国王一手执锤一手抓敌，上下埃及自此一统；胡夫金字塔用230万块巨石垒成，此后三千八百年保持世界最高建筑纪录——建它的不是奴隶，工人村遗址里有啤酒配给单。'],
+    ['评价','古代七大奇迹如今只剩它还站着。金字塔时代展示的国家动员与工程精度，至今让工程师肃然起敬；印和阗则由建筑师被后世神化为医神。']]},
+'埃及中王国':{
+ s:[['逸闻','《辛努海的故事》写宫廷侍臣流亡异邦、荣归故里，是世界最早的"游子文学"，被抄写传诵八百年——埃及学家称之为古埃及的《奥德赛》。'],
+    ['评价','古典埃及语文学与官僚制度的成熟期，法尤姆水利工程灌出粮仓；后世埃及人回望此期，如同中国人之念汉唐。']]},
+'埃及新王国':{
+ s:[['逸闻','女法老哈特谢普苏特以男装假须像统治二十年，身后名字被凿去；1922年图坦卡蒙墓完整出土，黄金面具震动世界；拉美西斯二世在位66年，子女百余，木乃伊至今可辨鹰钩鼻。'],
+    ['评价','埃及的帝国时代：疆域北抵幼发拉底；阿肯那顿的一神教实验比摩西更早，卡尔纳克与阿布辛贝的柱林至今仍是尼罗河畔最大的惊叹号。']]},
+'迦太基':{
+ f:[['汉尼拔','前247—前183 · 战象翻越阿尔卑斯·坎尼歼灭战']],
+ s:[['逸闻','传说狄多女王用一张牛皮剪成细条圈地建城；老加图在元老院每次演讲都以同一句话收尾——"迦太基必须毁灭"；第三次布匿战争后罗马把城市犁平，传说还撒了盐。'],
+    ['评价','地中海最强的商业海洋帝国，其覆灭为罗马腾出了整个西地中海；汉尼拔的坎尼合围战至今是各国军校的必修课。']]},
+'托勒密埃及':{
+ s:[['逸闻','亚历山大图书馆立法"扣船抄书"，过港船只所载书卷一律抄副本；馆长埃拉托色尼用两口井和一根杆子测出地球周长，误差仅百分之二；克利奥帕特拉裹在毯子里献给凯撒的故事则真伪参半。'],
+    ['评价','希腊化世界的学术首都：欧几里得在此写《几何原本》；罗塞塔石碑的三语对照，两千年后让商博良破译了沉睡的圣书字。']]},
+'马里帝国（西非）':{
+ s:[['逸闻','1324年曼萨·穆萨携万人驼队朝觐麦加，沿途撒金导致开罗金价十余年才恢复——多份榜单称他为有史以来最富的人；廷巴克图的学者与手抄本吸引整个伊斯兰世界的学生。'],
+    ['评价','撒哈拉商路上的黄金与盐帝国，用事实推翻了"撒哈拉以南没有文明"的殖民叙事；廷巴克图数十万册手抄本至今仍在抢救整理中。']]},
+/* ---------- 印度 · 南亚 ---------- */
+'印度河文明':{
+ s:[['逸闻','摩亨佐-达罗有覆砖下水道、冲水厕所和公共大浴池，市政水平领先世界两千年；数千枚印章上的文字至今无人能读，"祭司王"胸像与青铜舞女是它仅有的面孔。'],
+    ['评价','与两河、埃及并列的最早城市文明，却在公元前1900年前后悄然衰落——河流改道、季风减弱还是别的原因，仍是考古学最大悬案之一。']]},
+'吠陀时代 · 列国':{
+ s:[['逸闻','悉达多王子夜半逾城出家，菩提树下七七四十九日悟道成佛；他与孔子、苏格拉底几乎同代——雅斯贝尔斯称之为人类的"轴心时代"。'],
+    ['评价','种姓制度、《奥义书》的梵我之思、佛教与耆那教都定型于此，南亚此后三千年的精神版图在这几百年里一次画完；《摩诃婆罗多》十万颂至今是世界最长史诗。']]},
+'孔雀王朝':{
+ s:[['逸闻','阿育王在羯陵伽之战杀十万人后幡然悔悟，放下屠刀改行"正法"，在全国立柱刻诏；两千年后印度独立，柱头四狮成为国徽，法轮上了国旗。'],
+    ['评价','印度历史上第一次大一统；阿育王把一个地方教派推广成世界宗教——佛教东传中国、南下锡兰，都从这里出发。考底利耶的《政事论》则被称为印度的《君主论》。']]},
+'笈多王朝':{
+ s:[['逸闻','阿耶波多提出零的运算与位值记数、算出圆周率3.1416、断言地球自转——这些经阿拉伯人传入欧洲成了"阿拉伯数字"；法显此时游学印度，记下"民人殷乐、不用刑杖"。'],
+    ['评价','印度教古典文化的黄金时代：迦梨陀娑的《沙恭达罗》让歌德倾倒，那烂陀寺初具规模——后来玄奘万里求学的目的地正在此奠基。']]},
+'德里苏丹国':{
+ s:[['逸闻','库特布高塔73米，是胜利的宣言也是新时代的界碑；图格鲁克苏丹突发奇想强迁都城，全城百姓千里往返德里与道拉塔巴德，史家讥为"天才与疯子各半"。'],
+    ['评价','伊斯兰政权统治北印三百年，波斯语宫廷与印度本土传统开始深度杂交——乌尔都语、印度-伊斯兰建筑皆萌芽于此，为莫卧儿的辉煌打底。']]},
+'莫卧儿帝国':{
+ s:[['逸闻','沙贾汗为难产而逝的爱妃修泰姬陵二十二年，晚年被儿子奥朗则布囚于阿格拉堡，只能隔河遥望爱人的陵墓；阿克巴大帝不识字，却主持各教辩经、自创"神圣宗教"。'],
+    ['评价','印度-伊斯兰艺术的巅峰（泰姬陵被泰戈尔称为"永恒面颊上的一滴泪"）；奥朗则布的宗教高压耗空帝国，东印度公司的商船正等在门口。']]},
+'英属印度 → 印度共和国':{
+ f:[['安贝德卡尔','1891—1956 · 贱民出身的宪法之父'],['拉曼','1888—1970 · 拉曼散射·亚洲首位科学诺奖']],
+ s:[['逸闻','1930年甘地带78人徒步390公里到海边抓起一把盐，非暴力不合作席卷全国；1947年8月14日午夜独立钟声与印巴分治的千万人大迁徙同时上演，悲喜交加。'],
+    ['评价','非暴力抵抗成为二十世纪解殖与民权运动的通用剧本（马丁·路德·金自认甘地学生）；今日印度以软件、宝莱坞与十四亿人口重回世界舞台中心。']]},
+/* ---------- 日本 · 朝鲜 ---------- */
+'大和 · 飞鸟时代':{
+ s:[['逸闻','607年圣德太子国书开篇"日出处天子致书日没处天子"，隋炀帝览之不悦；此后二百余年遣隋唐使一波接一波，把律令、佛教、建筑整套搬回列岛。'],
+    ['评价','日本国家形态的奠基期：十七条宪法、大化改新全面学唐；法隆寺至今是世界最古老的木构建筑群——比中国现存唐构还早百年。']]},
+'奈良 · 平安时代':{
+ s:[['逸闻','阿倍仲麻吕十九岁入长安，与李白王维诗酒唱和，归国船遇风漂至越南，李白误闻其死讯写下"明月不归沉碧海"；紫式部在宫中写就《源氏物语》，比《红楼梦》早七个世纪。'],
+    ['评价','唐风消化为国风的过程：假名文字、和歌、物哀美学在此成型；《源氏物语》被视为世界最早的长篇小说，女性作家撑起了平安文学的半壁江山。']]},
+'镰仓 · 室町幕府':{
+ s:[['逸闻','元军两次东征均遭台风覆没，"神风"信仰由此而生；一休和尚真有其人——狂放的诗僧，八十岁仍与盲女相恋并写诗昭告天下。'],
+    ['评价','武士政权与禅宗美学的定型期：能剧、茶道、枯山水、金阁银阁皆成于此——今天世界所认知的"日本美学"，大半是这四百年的作品。']]},
+'朝鲜王朝（李氏）':{
+ s:[['逸闻','世宗大王亲创谚文，诏书说"愚民有所欲言而终不得伸其情者多矣，予为此悯然"；鸣梁海峡李舜臣以十三艘板屋船迎战日军百余艘，狭水道加潮汐，以少胜多。'],
+    ['评价','五百年儒教治国的完整样本；《朝鲜王朝实录》五百年逐日记录、《训民正音》的科学造字，双双列入世界记忆遗产。']]},
+'战国 · 安土桃山':{
+ s:[['逸闻','桶狭间之战织田信长两千奇袭今川四万；本能寺之变"敌在本能寺"成为背叛的代名词；千利休为丰臣秀吉点茶，终被赐死——一只乐烧茶碗从此贵过黄金。'],
+    ['评价','下克上的乱世锻造出统一：铁炮（火绳枪）传来五十年后日本产量世界第一；茶道"一期一会"的美学与南蛮贸易的全球视野，都是这场大乱的副产品。']]},
+'江户幕府':{
+ s:[['逸闻','大名每隔一年赴江户"参勤交代"，妻子常驻为质，养出了世界最大城市（18世纪江户人口破百万）；四十七浪士为主复仇后集体切腹，"忠臣藏"演到今天；1853年佩里四艘黑船一到，锁国即告终。'],
+    ['评价','二百六十年和平中町人文化开花：浮世绘、歌舞伎、俳句；北斋的《神奈川冲浪里》西传后，梵高莫奈争相临摹——印象派欠江户一声谢。']]},
+'明治维新 → 现代日本':{
+ s:[['逸闻','1871年岩仓使节团带着半个政府环球考察22个月；1964年东京奥运与新干线同时亮相宣告战后复兴；此后动漫、游戏与"物哀"美学成为新的文化输出。'],
+    ['评价','非西方国家现代化的第一个成功样本——也走过军国主义的歧途并付出惨重代价；其"追赶—反思"的完整周期，至今是后发国家研究的必修案例。']]},
+/* ---------- 美洲 ---------- */
+'奥尔梅克文明':{
+ s:[['逸闻','十七颗玄武岩巨石头像最重达四十吨，石料采自八十公里外——没有轮车与大型畜力，如何搬运至今众说纷纭；每颗头像五官各异，被认为是统治者肖像。'],
+    ['评价','中美洲的"母文明"：历法、球赛、羽蛇神意象与早期文字符号皆由此发端，玛雅与阿兹特克都是它的学生。']]},
+'玛雅文明（古典期）':{
+ s:[['逸闻','玛雅祭司的金星历表精确到每481年误差一天；他们独立发明了"零"；九世纪各大城邦在几十年内先后废弃，人去楼空的原因——大旱、战争还是生态崩溃——至今未有定论。'],
+    ['评价','新大陆唯一的成熟文字体系；没有金属工具、没有轮车、没有大型驮畜，却把天文与数学推到古代世界的最前列——热带雨林里的智力奇迹。']]},
+'阿兹特克帝国':{
+ s:[['逸闻','传说中鹰立仙人掌啄蛇之处即建都之地——这一幕如今画在墨西哥国旗上；特诺奇蒂特兰建在湖心岛上，堤道纵横、浮田环绕，西班牙士兵初见时以为走进了梦境。'],
+    ['评价','湖上帝国的组织力惊人，血祭宗教又令人胆寒；1521年亡于六百西班牙人、数万原住民盟军与一场天花——今日墨西哥城的主教座堂，就压在它的神庙基座上。']]},
+'印加帝国':{
+ s:[['逸闻','没有文字，用彩绳打结的奇普记账治国；皇帝阿塔瓦尔帕以整屋黄金白银赎命，皮萨罗收货后仍处死了他；马丘比丘藏在云雾山脊上，直到1911年才被外界"发现"。'],
+    ['评价','无货币、无市场、无文字，却以四万公里驿道和梯田系统管理着纵贯安第斯的千万人口——人类组织形态的另一种可能。']]},
+'美国':{
+ s:[['逸闻','1803年从拿破仑手里花1500万美元买下路易斯安那，国土一夜翻倍；1969年阿波罗11号登月，"个人一小步，人类一大步"；惠普、苹果、谷歌都诞生在车库里——车库成了创业圣地的图腾。'],
+    ['评价','二十世纪的科技、金融与流行文化输出中心：好莱坞、硅谷、华尔街各自定义了一种全球语言；移民社会的活力与种族、枪支等痼疾始终一体两面。']]},
+};
+
+/* ============ 人物生平库 · 增补（代表作 · 贡献 · 评价） ============ */
+Object.assign(BIO, {
+/* --- 先秦至两汉 --- */
+'后稷':{t:'周人始祖 · 农耕之神',l:'传说时代',a:['弃'],tl:[
+['传说','名弃，母姜嫄践巨人足迹而孕，弃于野而牛羊避之，故名"弃"'],
+['贡献','教民耕种稷麦，被尧举为农师，舜封于邰，号后稷'],
+['影响','周人尊为始祖，《诗经·生民》即咏其事；后世奉为五谷之神']],
+ev:'农耕文明的人格化符号——"社稷"一词中的"稷"，正源于他。'},
+'杜康':{t:'传说中的酿酒始祖',l:'传说时代',tl:[
+['传说','一说黄帝时人、一说夏王少康，以秫（高粱）酿酒'],
+['影响','历代酒坊奉为祖师；曹操"何以解忧，唯有杜康"使其名成为酒的代称']],
+ev:'一个名字变成一种饮品的代名词，是中国民俗文化"行业祖师"传统的典型。'},
+'女艾':{t:'夏代女将 · 中国史载最早的间谍',l:'夏少康时期',tl:[
+['背景','寒浞篡夏四十年，少康流亡有虞氏筹划复国'],
+['事迹','奉少康之命潜入寒浞之子浇的领地侦察虚实（《左传》"使女艾谍浇"）'],
+['贡献','情报助少康一举灭浇，完成"少康中兴"']],
+ev:'世界间谍史通常从她写起——比西方文献记载的间谍早约一千年。'},
+'羿与寒浞':{t:'代夏乱政的传说人物',l:'夏初',a:['后羿','寒浞'],tl:[
+['夺权','有穷氏首领羿凭善射夺取夏政，"因夏民以代夏政"'],
+['转折','羿耽于田猎，家臣寒浞收买其众，杀羿而烹之，霸占其家室'],
+['结局','寒浞掌权数十年，终被少康攻灭，夏朝复兴']],
+ev:'"后羿代夏"是中国最早的权臣篡位叙事；射日的神话后羿与此后羿常被混为一谈。'},
+'傅说':{t:'商代贤相',l:'商武丁时期',tl:[
+['出身','本为傅岩筑墙的刑徒奴隶'],
+['转折','武丁"梦得圣人"，画像遍寻天下，于版筑工地找到他，起为国相'],
+['贡献','辅佐武丁五十九年中兴，"若药弗瞑眩，厥疾弗瘳"等对答存于《尚书·说命》']],
+ev:'从奴隶到国相的极端逆袭，成为后世"举贤不问出身"的第一案例。'},
+'妲己':{t:'商纣王宠妃 · 亡国传说的符号',l:'？—约前1046',tl:[
+['入宫','有苏氏之女，纣王伐有苏所得，宠冠后宫'],
+['传说','酒池肉林、炮烙之刑等暴政传统上归罪其蛊惑；《封神演义》更演为狐妖'],
+['结局','牧野之战商亡，被周武王处死']],
+ev:'史实面目已不可考，她更多是"红颜祸水"叙事的原型之一——现代史家多认为亡国责任被转嫁于她。'},
+'伯夷·叔齐':{t:'商末义士兄弟',l:'商周之际',a:['伯夷','叔齐'],tl:[
+['让国','孤竹君二子互让君位，双双出走投奔西伯昌'],
+['叩马','武王伐纣，二人叩马而谏："以臣弑君，可谓仁乎？"'],
+['殉节','商亡后耻食周粟，隐于首阳山采薇而食，终饿死']],
+ev:'司马迁把《伯夷列传》放在七十列传第一篇——"求仁得仁"，气节叙事的中国源头。'},
+'褒姒':{t:'周幽王宠妃',l:'西周末',tl:[
+['入宫','褒国献女于幽王，立为妃，生伯服'],
+['传说','不爱笑，幽王举烽火戏诸侯以博一笑；又废申后与太子宜臼'],
+['结局','前771年申侯联合犬戎攻镐京，幽王被杀，褒姒被掳，西周亡']],
+ev:'"烽火戏诸侯"经考古与清华简研究已多被质疑，但作为寓言，它警示的是政治信用的崩塌。'},
+'晏婴':{t:'齐国名相',l:'？—前500',a:['晏子'],tl:[
+['仕齐','历事灵公、庄公、景公三朝，身不满六尺而名显诸侯'],
+['使楚','楚人开小门辱之，答"使狗国者从狗门入"；"橘生淮南则为橘"亦出此行'],
+['权谋','二桃杀三士，兵不血刃除三勇臣'],
+['代表作','言行辑为《晏子春秋》']],
+ev:'以节俭力行与机敏辞令著称，司马迁自叹"假令晏子而在，余虽为之执鞭，所忻慕焉"。'},
+'子产':{t:'郑国执政 · 法治先驱',l:'？—前522',a:['公孙侨'],tl:[
+['执政','前543年起执郑国政，内抑强宗、外周旋于晋楚两霸之间'],
+['铸刑书','前536年把刑法铸于鼎上公之于众——中国最早公布的成文法'],
+['名言','不毁乡校，曰"其所善者吾则行之，其所恶者吾则改之，是吾师也"'],
+['身后','死时"丁壮号哭，老人儿啼"，孔子闻之流涕称"古之遗爱也"']],
+ev:'比罗马《十二铜表法》早约九十年的公开立法，兼具开明与务实，是先秦政治家的标杆。'},
+'伍子胥':{t:'吴国重臣 · 复仇与忠谏的悲剧',l:'？—前484',a:['伍员'],tl:[
+['家难','楚平王杀其父兄，只身出逃，过昭关传说一夜白头'],
+['复仇','助阖闾夺位强吴，前506年破楚都郢，掘平王墓鞭尸三百'],
+['建城','主持修筑阖闾大城，为苏州建城之始'],
+['结局','谏夫差灭越不听，被赐剑自刎，遗言抉目悬于东门以观越军入吴']],
+ev:'把个人复仇、国家兴亡与忠谏悲剧集于一身；端午习俗在吴地一说即源于纪念他。'},
+'西施':{t:'越国美人 · 四大美女之首',l:'春秋末',a:['施夷光'],tl:[
+['出身','越国苎萝浣纱女，"沉鱼"之貌'],
+['入吴','勾践败后行美人计，经范蠡访得，献于吴王夫差'],
+['影响','夫差为其筑馆娃宫，日渐怠政；前473年越灭吴'],
+['结局','一说随范蠡泛五湖而去，一说沉江——成为千古悬念']],
+ev:'"西子"成为中文里美的最高级：苏轼咏西湖"欲把西湖比西子"，美人计亦列三十六计。'},
+'苏秦·张仪':{t:'纵横家双雄',l:'战国中期',a:['苏秦','张仪'],tl:[
+['苏秦','燕人（一说洛阳人），锥刺股苦读，佩六国相印合纵抗秦，"天下之士合从相聚于赵而欲攻秦"'],
+['张仪','魏人，两度相秦，以连横瓦解合纵；"舌在，足矣"为其名言'],
+['对局','一纵一横反复拆解，六国离合尽在其口舌之间'],
+['代表作','《战国策》所载游说辞章为纵横家范本']],
+ev:'凭口才与情报改变国际格局的职业外交家原型；"纵横捭阖"一词由此而来。'},
+'孙膑':{t:'军事家 · 《孙膑兵法》作者',l:'战国中期',tl:[
+['受刑','与庞涓同学兵法，遭其嫉妒陷害，被处膑刑（去膝盖骨）'],
+['田忌赛马','以下驷对上驷的换序策略助田忌赢齐王——博弈论的中国古典案例'],
+['桂陵·马陵','围魏救赵、减灶诱敌，两役皆擒杀庞涓势力，"庞涓死于此树之下"'],
+['代表作','《孙膑兵法》1972年银雀山汉墓出土，失传千年重见天日']],
+ev:'身残而智谋愈奇，其"避实击虚、攻其必救"与孙武一脉相承又自出机杼。'},
+'蔺相如':{t:'赵国上卿',l:'战国后期',tl:[
+['完璧归赵','奉和氏璧使秦，识破秦王无意偿城，持璧睨柱，完璧而归'],
+['渑池之会','逼秦王击缶，为赵王挽回体面'],
+['将相和','位居廉颇之上而处处避让，"先国家之急而后私仇"，廉颇负荆请罪']],
+ev:'勇在庙堂之上、智在分寸之间；"完璧归赵""负荆请罪"两个成语让他不朽。'},
+'李冰':{t:'秦蜀郡太守 · 水利工程家',l:'战国末',tl:[
+['任职','约前256年任蜀郡太守，主持岷江治理'],
+['都江堰','鱼嘴分水、飞沙堰泄洪、宝瓶口引流——无坝引水的系统设计'],
+['贡献','成都平原从此"水旱从人，不知饥馑"，号为天府'],
+['影响','工程运转两千二百余年至今仍在灌溉，为世界现存最古老的在用水利工程']],
+ev:'"深淘滩，低作堰"六字诀传承至今——用最小干预换最大效益的工程哲学典范。'},
+'荆轲':{t:'刺客 · 悲剧英雄',l:'？—前227',tl:[
+['受命','燕太子丹奉为上卿，谋刺秦王政以阻并吞'],
+['易水','临行高歌"风萧萧兮易水寒，壮士一去兮不复还"'],
+['图穷匕见','以樊於期首级与督亢地图为献，匕首现而事败，被杀于秦廷'],
+['后果','秦以此为由伐燕，五年后天下一统']],
+ev:'司马迁《刺客列传》的压卷人物；一次失败的行刺，成为两千年"士为知己者死"的精神图腾。'},
+'项羽':{t:'西楚霸王',l:'前232—前202',a:['项籍'],tl:[
+['起兵','前209年随叔父项梁会稽起兵，"彼可取而代也"'],
+['巨鹿','前207年破釜沉舟，九战九捷全歼秦军主力，诸侯"膝行而前"'],
+['分封','入关屠咸阳，自立西楚霸王，分封十八诸侯；鸿门宴纵走刘邦'],
+['垓下','前202年四面楚歌，霸王别姬，突围至乌江拒渡，自刎，年三十']],
+ev:'"羽之神勇，千古无二"；李清照"至今思项羽，不肯过江东"——失败者被咏唱两千年，唯此一人。'},
+'徐福':{t:'方士 · 东渡传说主角',l:'秦代',a:['徐巿'],tl:[
+['上书','向始皇言海中有蓬莱、方丈、瀛洲三神山，请求入海求仙药'],
+['东渡','两次出海，携三千童男女与百工五谷，一去不返'],
+['传说','或言至"平原广泽"止王不来——日本多地有徐福登陆传说与祠庙']],
+ev:'史实与传说交织的东亚航海第一案；无论真相如何，他已成为中日文化交流叙事的开篇人物。'},
+'孟姜女':{t:'民间传说人物',l:'传说（附会秦代）',tl:[
+['原型','故事雏形出自《左传》杞梁妻"哭之哀"，汉代以后逐渐附会到秦长城'],
+['传说','丈夫范喜良被征修长城而死，孟姜女千里送寒衣，哭倒长城八百里'],
+['影响','与牛郎织女、梁祝、白蛇传并称中国四大民间传说']],
+ev:'一个哭声穿透两千年——民众用她控诉徭役苦难，是"传说比史书更真实"的样本。'},
+'苏武':{t:'汉使 · 持节不屈的象征',l:'前140—前60',tl:[
+['出使','前100年持节使匈奴，因副使卷入内乱被扣'],
+['威逼','匈奴逼降，"拥雪吞旃"不死；单于徙之北海（贝加尔湖）牧公羊："羝乳乃得归"'],
+['牧羊','杖汉节牧羊十九年，节旄尽落而不离手'],
+['归汉','前81年汉匈和亲得归，须发尽白；宣帝朝图形麒麟阁']],
+ev:'"苏武牧羊"是中文里气节的终极意象；李陵劝降时那句"臣事君，犹子事父也"的对照，更显其重。'},
+'李广':{t:'汉名将 · 飞将军',l:'？—前119',tl:[
+['威名','历文景武三朝，与匈奴七十余战，匈奴畏之号"飞将军"，数岁不敢入界'],
+['射虎','出猎见草中石以为虎，一箭没镞——"林暗草惊风"即咏此'],
+['不遇','终身未得封侯，"李广难封"成典'],
+['结局','前119年漠北之战迷道失期，不愿对刀笔之吏，引刀自刭，军民皆哭']],
+ev:'王昌龄"但使龙城飞将在，不教胡马度阴山"——武功之外，他更是怀才不遇者的千年知己。'},
+'东方朔':{t:'西汉文学家 · 滑稽之雄',l:'前154—前93',tl:[
+['自荐','上书自称"目若悬珠，齿若编贝"，三千奏牍武帝读了两月'],
+['侍君','以诙谐讽谏得幸，割肉遗妻、金马门避世，自称"避世于朝廷"'],
+['代表作','《答客难》开设论体赋先河'],
+['身后','民间不断神化，成为"岁星下凡"的仙人与相声界祖师']],
+ev:'在专制皇权旁以幽默存身又暗藏讽谏——"大隐隐于朝"的活标本。'},
+'司马相如·卓文君':{t:'汉赋大家与才女的传奇伉俪',l:'前179—前117 / 生卒不详',a:['司马相如','卓文君'],tl:[
+['琴挑','相如客临邛，一曲《凤求凰》挑动新寡的富家女文君，当夜私奔'],
+['当垆','家徒四壁，文君当垆卖酒、相如涤器于市，逼得岳父分财'],
+['代表作','相如《子虚赋》《上林赋》定汉大赋格局，武帝读而恨不同时'],
+['白头吟','传相如欲纳妾，文君作"愿得一心人，白头不相离"，遂止']],
+ev:'汉赋的巅峰与中国最著名的私奔——文学史与爱情史在这对夫妇身上合流。'},
+'霍光':{t:'西汉权臣 · 废立皇帝第一人',l:'？—前68',tl:[
+['托孤','霍去病异母弟，武帝临终受周公辅成王图，辅八岁昭帝'],
+['执政','辅政二十年，轻徭薄赋与民休息，定"昭宣中兴"之基'],
+['废立','前74年迎立昌邑王，二十七日后以淫乱废之，改立宣帝——"行伊霍之事"自此成典'],
+['身后','宣帝画其像于麒麟阁第一；两年后霍氏谋反族灭']],
+ev:'权臣的天花板与警示录一体：生极人臣之盛，死而族灭——"威震主者不畜"。'},
+'王充':{t:'东汉思想家',l:'27—约97',tl:[
+['出身','会稽上虞人，家贫，常在洛阳书肆立读，过目成诵'],
+['代表作','三十年著《论衡》八十五篇，"疾虚妄"三字为纲'],
+['观点','否定天人感应与鬼神，谓"天地合气，万物自生"，雷为爆气而非天怒'],
+['影响','书成后被视为异端而湮没，汉末蔡邕得之秘玩，方渐流传']],
+ev:'在谶纬迷信弥漫的时代独举理性大旗，被今人称为中国古代最接近科学精神的思想家。'},
+'马援':{t:'东汉名将 · 伏波将军',l:'前14—49',tl:[
+['名言','"丈夫为志，穷当益坚，老当益壮"；"男儿要当死于边野，以马革裹尸还葬耳"'],
+['聚米为山','隗嚣之战中以米堆演示地形，为最早的军事沙盘'],
+['南征','平交趾二征之乱，立铜柱为汉界'],
+['结局','六十二岁请缨南征五溪蛮，病死军中；因谗一度不得下葬']],
+ev:'"马革裹尸""老当益壮"皆出其口——军人精神在汉语里的定型者。'},
+'窦宪':{t:'东汉外戚名将',l:'？—92',tl:[
+['戴罪立功','因刺杀案获罪，请击匈奴赎死'],
+['燕然勒石','89年稽落山大破北匈奴，登燕然山刻石纪功（2017年铭文在蒙古被确认）'],
+['影响','北匈奴西迁，一说引发多米诺骨牌间接推动数百年后欧洲民族大迁徙'],
+['结局','权倾朝野图谋不轨，和帝联合宦官收其兵权，赐死']],
+ev:'"勒石燕然"从此与"封狼居胥"并列为武功极致；其人其事则是外戚干政的标准剧本。'},
+'郑玄':{t:'东汉经学大师',l:'127—200',a:['郑康成'],tl:[
+['求学','家贫好学，西入关师事马融，学成辞归，融叹"郑生今去，吾道东矣"'],
+['党锢','遭禁锢十四年，杜门注经'],
+['代表作','遍注《周易》《毛诗》《三礼》等群经，兼采今古文，自成"郑学"'],
+['身后','弟子数千，经学从此"小统一"；袁绍逼其随军，病卒于途']],
+ev:'两汉四百年经学的总结者——此后读儒经的人，几乎都在读郑玄的注。'},
+/* --- 三国至宋元 --- */
+'吕布':{t:'东汉末猛将',l:'？—199',a:['吕奉先'],tl:[
+['勇名','弓马骁武号"飞将"，时语"人中吕布，马中赤兔"'],
+['反覆','先后杀丁原、董卓两位义父，张飞骂"三姓家奴"由此而来'],
+['辕门射戟','一箭调停袁术刘备之争，武艺与急智的名场面'],
+['结局','199年下邳城破，乞降不成被曹操缢杀于白门楼']],
+ev:'武力值的天花板与信用值的地板集于一身——乱世中"有勇无谋且无信"的教科书结局。'},
+'貂蝉':{t:'《三国演义》虚构美人',l:'文学形象',tl:[
+['连环计','王允义女，先许吕布再献董卓，离间父子'],
+['凤仪亭','吕布戏貂蝉被董卓掷戟，仇隙已成'],
+['结局','董卓伏诛后归吕布；正史无此人，形象或源于吕布私通的董卓侍婢']],
+ev:'四大美女中唯一的文学虚构——却以一己之力扳倒权臣，是演义里最成功的"软实力"。'},
+'陆逊':{t:'东吴统帅 · 出将入相',l:'183—245',tl:[
+['袭荆州','219年与吕蒙定计，白衣渡江前示弱骄关羽'],
+['夷陵','222年面对刘备复仇大军坚壁七月，一把火烧连营七百里'],
+['石亭','228年再破魏军曹休十万'],
+['结局','官至丞相，卷入太子之争被孙权反复责问，愤忿而卒']],
+ev:'书生拜大都督而两挫蜀魏，功高而不得善终——江东版的"飞鸟尽，良弓藏"。'},
+'吕蒙':{t:'东吴名将',l:'178—220',tl:[
+['士别三日','孙权劝学，鲁肃后见之叹"非复吴下阿蒙"，"刮目相待"出此'],
+['白衣渡江','219年扮商旅袭取荆州，兵不血刃'],
+['擒关羽','厚抚蜀军家属瓦解斗志，关羽败走麦城被擒'],
+['结局','夺荆州同年病逝，孙权亲为延医']],
+ev:'从大字不识的武夫到统帅的自我升级案例——"开卷有益"最有名的代言人。'},
+'姜维':{t:'蜀汉大将军',l:'202—264',a:['姜伯约'],tl:[
+['归蜀','本魏国天水中郎将，228年为诸葛亮所得，倾囊相授'],
+['北伐','诸葛亮死后主持军事，九伐中原胜负相抵，国力渐耗'],
+['守剑阁','263年挡住钟会主力，邓艾偷渡阴平灭蜀'],
+['最后一计','诈降钟会策动叛乱图复国，事败被杀——"臣等正欲死战，陛下何故先降"']],
+ev:'"人心思汉"的最后火种；连亡国之后还要再赌一局，悲壮为三国之最。'},
+'嵇康':{t:'竹林七贤精神领袖',l:'224—263',a:['嵇叔夜'],tl:[
+['风姿','身长七尺八寸，"岩岩若孤松之独立"；打铁自给，钟会来访不辍锤'],
+['代表作','《广陵散》琴曲、《与山巨源绝交书》、"越名教而任自然"'],
+['获罪','为友吕安鸣不平触怒司马昭，钟会进谗'],
+['刑场','三千太学生请以为师不许；索琴弹《广陵散》，叹"于今绝矣"，从容就戮']],
+ev:'中国文人风骨的极限样本——把死刑现场变成了音乐会。'},
+'阮籍':{t:'竹林七贤 · 诗人',l:'210—263',a:['阮嗣宗'],tl:[
+['佯狂','司马氏篡魏之际以醉酒避祸，求亲者来则大醉六十日'],
+['青白眼','对礼俗之士以白眼，对知音青眼相加'],
+['穷途之哭','驾车独行，路尽辄恸哭而返'],
+['代表作','《咏怀诗》八十二首，隐晦幽深，开中国政治抒情组诗先河']],
+ev:'在屠刀与名教夹缝中保全性命与人格的艺术——"发言玄远，口不臧否人物"。'},
+'石崇':{t:'西晋巨富',l:'249—300',tl:[
+['敛财','任荆州刺史时劫掠商旅致富——史书明载的"官匪"'],
+['斗富','与国舅王恺竞奢：王恺糖水刷锅他蜡烛当柴，晋武帝助恺二尺珊瑚，他随手击碎赔以三四尺者六七株'],
+['金谷园','筑园极天下之丽，宴集赋诗为"金谷二十四友"'],
+['结局','八王之乱中因不肯让出爱妾绿珠被诬杀，绿珠坠楼；叹"财致害"，收尸者曰"知财为害，何不早散"']],
+ev:'奢靡亡身的千年反面教材；"石崇斗富"至今是炫富的代名词。'},
+'王导':{t:'东晋开国名相',l:'276—339',tl:[
+['拥立','永嘉乱后辅司马睿渡江，联络南北士族定江东'],
+['共天下','元帝登基竟拉其同坐御床，时谚"王与马，共天下"'],
+['新亭','士人对泣"风景不殊"，导正色曰"当共戮力王室，克复神州，何至作楚囚相对"'],
+['执政','历仕三朝，镇之以静，宽和得众']],
+ev:'门阀政治的总设计师——没有王导，就没有东晋百年偏安。'},
+'葛洪':{t:'东晋道教学者 · 炼丹家',l:'283—343',a:['抱朴子'],tl:[
+['代表作','《抱朴子》内篇论神仙方药、外篇论时政得失'],
+['医学','《肘后备急方》为随身急救手册——"青蒿一握，以水二升渍"启发屠呦呦提取青蒿素'],
+['晚年','闻交趾出丹砂，求为句漏令，携子侄隐罗浮山炼丹而终']],
+ev:'炼丹炉里意外炼出化学与医药史地位；一千六百年后帮中国摘下诺贝尔奖的古人。'},
+'慧远':{t:'东晋高僧 · 净土宗初祖',l:'334—416',tl:[
+['出家','博综六经，闻道安讲般若豁然而悟："儒道九流皆糠秕耳"'],
+['庐山','驻锡东林寺三十余年，"影不出山，迹不入俗"，送客不过虎溪'],
+['结社','与刘遗民等百二十三人结白莲社，共期西方净土'],
+['沙门不敬王者','著论力争僧团独立于皇权']],
+ev:'佛教中国化的关键推手——净土法门后来成为汉传佛教信众最广的宗派。'},
+'谢灵运':{t:'山水诗开创者',l:'385—433',tl:[
+['出身','谢玄之孙，袭封康乐公，"才高一斗"之自负（天下才共一石，曹子建独得八斗，我得一斗）'],
+['山水','政治失意纵情山水，发明登山木屐"谢公屐"，李白"脚著谢公屐"咏之'],
+['代表作','"池塘生春草，园柳变鸣禽"——山水从此成为中国诗的独立主题'],
+['结局','恃才傲物屡贬，终以"叛逆"罪弃市广州']],
+ev:'把中国诗的镜头第一次从人事转向自然——没有谢灵运，就没有后来的王维孟浩然。'},
+'昙曜':{t:'北魏高僧 · 云冈石窟主持者',l:'5世纪',tl:[
+['复法','太武帝灭佛后，文成帝即位复法，昙曜受命主持僧务'],
+['凿窟','于武州塞开凿昙曜五窟，大佛依五位皇帝形貌——"皇帝即当今如来"'],
+['僧祇户','创设寺院经济制度，以粮储赈饥']],
+ev:'云冈五万一千余尊造像的起点；皇权与佛法在他手中达成了影响深远的和解。'},
+'兰陵王高长恭':{t:'北齐名将 · 面具战神',l:'541—573',a:['高长恭','兰陵王'],tl:[
+['邙山','564年率五百骑两入周军重围解洛阳之围，勇冠三军'],
+['面具','传因貌柔美不足威敌，戴狰狞面具冲阵；军中作《兰陵王入阵曲》'],
+['结局','一句"国事即家事"招忌，被后主鸩杀，年三十三'],
+['影响','《入阵曲》唐时东传日本，雅乐《兰陵王》舞至今仍演']],
+ev:'美貌、战功与冤死凑齐的悲剧偶像——他的面具舞在日本跳了一千四百年。'},
+'宇文恺':{t:'隋代建筑与规划大师',l:'555—612',tl:[
+['大兴城','582年任副监规划新都大兴（唐长安），棋盘格局、108坊，为当时世界最大城市'],
+['东都·运河','主持营建洛阳、开通广通渠'],
+['奇构','造可坐数百人的观风行殿与周长两千步的大帐'],
+['代表作','《明堂图议》以比例模型论证古制——早期建筑制图学文献']],
+ev:'长安城的总设计师——他画下的方格网，后来被平城京、平安京整体复制。'},
+'刘焯':{t:'隋代天文历算学家',l:'544—610',tl:[
+['历法','编《皇极历》，首创等间距二次内插法推算日月运动'],
+['岁差','定岁差75年差1度，远精于前人'],
+['大地测量','倡议实测子午线以正日影千里差一寸之谬，隋未行，唐一行终成之']],
+ev:'其内插法领先欧洲千年；一行测子午线的蓝图，其实是他画的。'},
+'柳宗元':{t:'唐代文学家 · 唐宋八大家',l:'773—819',a:['柳河东','柳子厚'],tl:[
+['早达','二十一岁进士，三十岁前名满长安'],
+['永贞革新','805年参与王叔文改革，百日而败，贬永州司马十年'],
+['代表作','《永州八记》开游记文学，《捕蛇者说》"苛政猛于虎"，《江雪》"独钓寒江雪"'],
+['柳州','再贬柳州刺史，释放奴婢、凿井办学，卒于任，年四十七']],
+ev:'贬谪把政治家磨成了文学家——中国山水散文自永州始。'},
+'李靖':{t:'唐初军神',l:'571—649',a:['李药师'],tl:[
+['灭萧铣','621年出奇兵下江陵，抚定江南'],
+['灭东突厥','630年率三千骑夜袭定襄，再袭阴山，擒颉利可汗——太宗"雪耻酬百王"'],
+['灭吐谷浑','635年以六旬高龄远征青海'],
+['代表作','兵法辑为《唐太宗李卫公问对》，列武经七书'],
+['身后','图形凌烟阁；民间逐渐神化为"托塔天王"原型之一']],
+ev:'出将入相而知进退，历唐初诸大战无一败绩——古代军事家里罕见的完人剧本。'},
+'上官婉儿':{t:'唐代女官 · 巾帼宰相',l:'664—710',tl:[
+['出身','祖父上官仪获罪族诛，随母配入掖庭为婢'],
+['得幸','十四岁为武则天赏识，掌诏命二十余年，"两朝专美"'],
+['称量天下','中宗朝专掌制诰，主持修文馆，品评天下诗文'],
+['结局','710年唐隆政变中被李隆基所杀；2013年其墓志出土，补正史书']],
+ev:'从罪奴到实际执掌文柄的"内相"——科举时代之前，女性以才学抵达权力中枢的孤例。'},
+'陆羽':{t:'茶圣',l:'733—804',a:['陆鸿渐'],tl:[
+['身世','弃婴，为竟陵僧收养，以《易》占得名"陆羽"'],
+['逃寺','不愿学佛，逃入戏班作伶人，后遇贬官李齐物赏识始得读书'],
+['代表作','遍访茶山二十余年，撰《茶经》三卷——世界第一部茶学专著'],
+['影响','"自从陆羽生人间，人间相学事春茶"；被茶行奉为茶神']],
+ev:'一部《茶经》把解渴的饮料升格为一种文明——东亚茶道的总源头。'},
+'僧一行':{t:'唐代天文学家 · 高僧',l:'683—727',a:['张遂'],tl:[
+['出家','本名张遂，为避武三思拉拢出家'],
+['测地','724年主持全国天文大地测量，实测子午线一度之长——世界首次'],
+['仪器','与梁令瓒造水运浑天仪，附自动报时木人，含擒纵机构雏形'],
+['代表作','《大衍历》，行用近九百年并东传日本']],
+ev:'和尚的袈裟下是当时世界最强的天文台长——李约瑟称其水运浑仪为最早的机械钟前身。'},
+'钱镠':{t:'吴越国开国之君',l:'852—932',a:['钱武肃王'],tl:[
+['出身','杭州临安人，贩盐出身，乱世从军起家'],
+['保境安民','据两浙之地，奉中原正朔不称帝，劝课农桑'],
+['海塘','筑捍海石塘，传说怒射钱塘潮，"钱塘"自此安澜'],
+['家训','"陌上花开，可缓缓归矣"致夫人书传为佳话；《钱氏家训》泽被后世（钱学森、钱三强、钱穆皆其裔）']],
+ev:'五代乱世的另类答案：不逐鹿中原，把一方水土经营成千年繁华的起点——杭州之兴自钱氏始。'},
+'韩熙载':{t:'南唐重臣 · 夜宴主角',l:'902—970',tl:[
+['北人南渡','中原士族出身，父被诛奔吴，自诩"江东之地，据吾所有"'],
+['不为相','后主猜忌北人，他纵情声色自污以避相位'],
+['夜宴图','李煜遣画家顾闳中夜窥其宴，默写成《韩熙载夜宴图》'],
+['结局','散尽家财蓄伎四十，卒后李煜叹"吾终不得熙载为相"']],
+ev:'用一场场夜宴演出的政治避险——那幅偷画下来的画，成了中国人物画的巅峰。'},
+'顾闳中':{t:'南唐宫廷画家',l:'约910—980',tl:[
+['待诏','南唐画院待诏，工人物写真'],
+['代表作','奉命夜探韩宅，目识心记绘成《韩熙载夜宴图》：听乐、观舞、歇息、清吹、送别五段一气呵成'],
+['影响','原作宋摹本藏故宫，为中国十大传世名画之一']],
+ev:'一次"特务任务"成就千古名画——五段式构图至今是叙事画的教科书。'},
+'寇准':{t:'北宋名相',l:'961—1023',a:['寇莱公'],tl:[
+['直谏','太宗朝扯住帝衣强留听谏，太宗比之魏征'],
+['澶渊','1004年辽军南下，力排南迁之议，逼真宗亲征澶州，城头黄伞一张军心大振'],
+['之盟','和议成，岁币三十万而换百年和平；后遭"孤注一掷"之谗罢相'],
+['结局','两度罢相，贬死雷州；仁宗朝谥"忠愍"']],
+ev:'一个人顶住一个朝廷的怯懦——没有寇准站在澶州城头，北宋历史可能提前一百年改写。'},
+'柳永':{t:'北宋词人 · 婉约派宗师',l:'约984—1053',a:['柳三变','柳七'],tl:[
+['落第','科举失意作《鹤冲天》"忍把浮名，换了浅斟低唱"，仁宗闻之黜落："且去填词"'],
+['奉旨填词','自称"奉旨填词柳三变"，流连坊曲，为乐工歌伎作词'],
+['代表作','《雨霖铃》"杨柳岸晓风残月"、《望海潮》"三秋桂子，十里荷花"'],
+['身后','"凡有井水饮处，皆能歌柳词"；传由歌伎凑钱安葬，岁岁"吊柳七"']],
+ev:'第一个把词从士大夫酒边小令写成市民大众流行曲的人——宋代的顶流词作者。'},
+'米芾':{t:'北宋书画家 · 米颠',l:'1051—1107',a:['米元章'],tl:[
+['颠行','好洁成癖、遇石称兄下拜——"米颠拜石"'],
+['书法','与苏黄蔡并称宋四家，自谓"刷字"，八面出锋'],
+['代表作','《蜀素帖》被誉"中华第一美帖"；创"米氏云山"水墨点染法'],
+['鉴藏','任书画学博士，蓄晋唐真迹成癖，传曾以摹本换真迹']],
+ev:'癫狂是表演也是保护色——书法史绕不开的一支笔，山水画里第一团墨点的烟云。'},
+'程颢·程颐':{t:'理学奠基人 · 二程',l:'1032—1085 / 1033—1107',a:['程颢','程颐','二程'],tl:[
+['同学','兄弟同受学于周敦颐，"吟风弄月以归"'],
+['天理','程颢言"吾学虽有所受，天理二字却是自家体贴出来"'],
+['程门立雪','杨时游酢侍立雪中不忍惊程颐午睡——尊师典故之最'],
+['代表作','语录辑为《二程遗书》；"涵养须用敬，进学则在致知"'],
+['影响','洛学经杨时罗从彦李侗传至朱熹，集成为程朱理学']],
+ev:'把儒学从章句训诂拉回心性天理——此后七百年中国人的精神课本由此改写。'},
+'杨业':{t:'北宋名将 · 杨家将原型',l:'？—986',a:['杨继业','杨无敌'],tl:[
+['归宋','本北汉名将号"无敌"，随主降宋，守代州'],
+['雁门','980年以数千骑绕击辽军十万，威震契丹，望其旌旗即引去'],
+['陈家谷','986年北伐掩护撤军，监军王侁逼其出战又撤走接应，重伤被俘'],
+['殉国','绝食三日而死；其子孙事迹演为杨家将传奇']],
+ev:'正史一页悲壮，民间千年演义——杨家将故事是忠烈叙事最成功的IP化。'},
+'虞允文':{t:'南宋文臣 · 采石矶书生退敌',l:'1110—1174',tl:[
+['受命','1161年金主完颜亮六十万大军压江，他以中书舍人身份犒师采石'],
+['督战','前线无主帅，毅然收拾溃军一万八千，部署水陆'],
+['大捷','海鳅船冲阵纵火，两日大破金军渡江企图；完颜亮移师瓜洲被部下所杀'],
+['后任','两度为相，治蜀有声']],
+ev:'毛泽东批注"伟哉虞公，千古一人"——文官临危接盘打赢国运之战的孤例。'},
+'韩世忠·梁红玉':{t:'中兴名将与击鼓夫人',l:'1089—1151 / ？—1135',a:['韩世忠','梁红玉'],tl:[
+['出身','韩为延安泅民出身的悍卒；梁本京口营伎，识韩于微时'],
+['黄天荡','1130年以八千兵锁金兀术十万于黄天荡四十八日，梁红玉亲执桴鼓'],
+['苗刘之变','夫妇定策勤王平叛，梁封安国夫人——女性以军功封侯之始'],
+['晚年','岳飞冤狱，韩当面质问秦桧"莫须有三字何以服天下"，罢兵权杜门谢客']],
+ev:'一对从底层杀出的夫妻档：战功、胆识与那句"莫须有何以服天下"，都足以传世。'},
+'姜夔':{t:'南宋词人 · 音乐家',l:'约1155—1221',a:['姜白石','白石道人'],tl:[
+['布衣','终身不仕，往来于名公巨卿间，以文艺自给'],
+['代表作','《扬州慢》"二十四桥仍在，波心荡、冷月无声"；《暗香》《疏影》咏梅双璧'],
+['旁谱','《白石道人歌曲》十七首自注工尺旁谱——唯一完整传世的宋代词乐'],
+['结局','晚年贫病，卒于杭州，友人集资葬之']],
+ev:'宋词的"清空"一派宗师；若无他随手记下的曲谱，宋人怎么唱词将永远成谜。'},
+'黄道婆':{t:'元代棉纺织革新家',l:'约1245—1330',a:['黄婆'],tl:[
+['流落','幼为童养媳不堪虐待，随海船流落崖州（海南）三十余年'],
+['学艺','尽得黎族错纱配色、综线挈花之术'],
+['归乡','约1295年返松江乌泥泾，改进捍弹纺织之具，造三锭脚踏纺车'],
+['影响','松江布"衣被天下"，江南棉纺业崛起；乡人立祠奉祀']],
+ev:'一位无名老妇完成的技术转移，抵得上一场产业革命——先棉神话的真人版。'},
+'王实甫':{t:'元曲作家',l:'约1260—1336',tl:[
+['代表作','杂剧《西厢记》五本二十一折，突破一本四折定格'],
+['名句','"愿普天下有情的都成了眷属"；"碧云天，黄花地"化用范仲淹词'],
+['影响','《红楼梦》中宝黛共读西厢——明清青年的"禁书"与爱情启蒙']],
+ev:'中国戏曲史上"文采派"的最高峰；一句台词成为七百年来对爱情最大方的祝福。'},
+'赵孟頫':{t:'元代书画宗师',l:'1254—1322',a:['赵子昂','松雪道人'],tl:[
+['贰臣','宋太祖十一世孙，宋亡后应忽必烈征召出仕，毁誉随身'],
+['书法','真行楷入"楷书四大家"（颜柳欧赵），倡复古直追二王'],
+['代表作','《鹊华秋色图》《秋郊饮马图》；提出"书画本来同"'],
+['家学','妻管道昇、子赵雍皆书画名家，一门风雅']],
+ev:'政治上的两难换来艺术上的集大成——元以后中国书画的审美航道，多半由他校准。'},
+/* --- 明清近现代 · 并立政权 --- */
+'于谦':{t:'明代名臣 · 北京保卫战统帅',l:'1398—1457',a:['于少保'],tl:[
+['明志','十二岁作《石灰吟》"粉身碎骨浑不怕，要留清白在人间"'],
+['两袖清风','巡抚晋豫十九年，入京不带一物："清风两袖朝天去"'],
+['京师保卫战','1449年土木堡英宗被俘，他斥南迁之议"言南迁者可斩"，拥立景帝，列阵九门破瓦剌'],
+['结局','1457年夺门之变英宗复辟，以"谋逆"冤杀；抄家无余财，唯正室锁着皇帝所赐蟒袍剑器']],
+ev:'"救时宰相"四字足矣——没有于谦，明朝1449年就可能提前进入南明剧本。'},
+'唐寅':{t:'明代书画家 · 江南才子',l:'1470—1524',a:['唐伯虎','六如居士'],tl:[
+['解元','弘治十一年乡试第一，名动江南'],
+['科场案','会试受徐经贿题案牵连下狱，终身禁考，功名之路断绝'],
+['卖画','靠鬻画为生，"不炼金丹不坐禅，不为商贾不耕田"'],
+['代表作','《秋风纨扇图》《事茗图》；诗"别人笑我太疯癫，我笑他人看不穿"'],
+['结局','晚年皈依佛理号六如，贫病而卒，年五十四']],
+ev:'民间点秋香的风流才子，史实里是被科场案毁掉一生的失意人——落差本身即是传奇。'},
+'袁崇焕':{t:'明末蓟辽督师',l:'1584—1630',tl:[
+['宁远大捷','1626年凭坚城用红夷大炮挫努尔哈赤，后者旋卒——明清战争明军首次大胜'],
+['宁锦再捷','1627年再退皇太极'],
+['平台奏对','崇祯召见许以"五年复辽"，赐尚方剑'],
+['杀毛文龙','矫诏斩皮岛守将，朝野哗然，授人以柄'],
+['结局','1629年皇太极绕道入关兵临北京，反间计+朝议汹汹，次年以"通敌"凌迟，百姓争食其肉；清修明史时方揭反间真相']],
+ev:'到底是长城还是罪臣，争论至今——但"自毁长城"四个字，是崇祯朝留给历史最痛的注脚。'},
+'罗贯中':{t:'《三国演义》作者',l:'约1330—约1400',a:['罗本'],tl:[
+['乱世','元末曾入张士诚幕，"有志图王者"，目睹群雄逐鹿'],
+['著书','据陈寿《三国志》与民间平话，融铸为《三国志通俗演义》'],
+['影响','开章回小说先河；"七实三虚"的写法让演义比正史更深入人心']],
+ev:'一支笔重塑了中国人对整个三国时代的记忆——诸葛亮的羽扇、关羽的青龙刀，都是他发的。'},
+'施耐庵':{t:'《水浒传》作者',l:'约1296—约1370',tl:[
+['身世','生平记载极少，传为兴化人，元末进士，曾入张士诚幕后隐居著书'],
+['代表作','《水浒传》一百零八将，"官逼民反"的江湖史诗'],
+['影响','与《三国演义》同开章回体；明清屡遭禁毁而愈禁愈传']],
+ev:'把绿林草莽写成了不朽群像——中国小说里第一部真正意义的"人民叙事"。'},
+'利玛窦':{t:'意大利耶稣会士 · 中西会通第一人',l:'1552—1610',a:['Matteo Ricci','泰西儒士'],tl:[
+['东来','1582年抵澳门，习汉语、着儒服，自号"泰西儒士"'],
+['贡献','与徐光启合译《几何原本》前六卷；绘《坤舆万国全图》，中国人首见五大洲'],
+['入京','1601年进献自鸣钟获准居北京，士大夫争与之游'],
+['身后','卒于北京，万历帝破例赐葬地——首位葬于北京的西方传教士']],
+ev:'四百年前最成功的"文化翻译"：让西学在中国着陆，也让欧洲第一次系统了解儒家中国。'},
+'顾炎武':{t:'明末清初思想家 · 清学开山',l:'1613—1682',a:['顾亭林'],tl:[
+['抗清','昆山起兵抗清，母绝食殉国遗命"勿事二姓"'],
+['游历','北游二十五年，骡马载书，考察山川关塞'],
+['代表作','《日知录》《天下郡国利病书》；开考据学风'],
+['名言','"天下兴亡，匹夫有责"（原文"保天下者，匹夫之贱与有责焉"）']],
+ev:'拒绝空谈心性、把学问拉回经世致用——清代三百年学术的第一块基石。'},
+'黄宗羲':{t:'明末清初思想家',l:'1610—1695',a:['梨洲先生'],tl:[
+['复仇','父为东林党人死于阉祸，十九岁袖锥入京刺仇人于庭'],
+['抗清','组"世忠营"抗清失败，隐居著述'],
+['代表作','《明夷待访录》斥"为天下之大害者，君而已矣"，主张学校议政'],
+['史学','《明儒学案》开学术史体例']],
+ev:'比卢梭早一百年的君主专制批判——清末维新派把《明夷待访录》当宣传册翻印。'},
+'王夫之':{t:'明末清初思想家',l:'1619—1692',a:['船山先生'],tl:[
+['抗清','衡阳举兵败，遁入湘西瑶洞，誓不剃发'],
+['隐居','石船山下著书四十年，"六经责我开生面"'],
+['代表作','《读通鉴论》《张子正蒙注》；主张"理在气中""日新之化"'],
+['身后','著作湮没近二百年，晚清刊《船山遗书》而大显']],
+ev:'与顾黄并称三大儒而思辨最深——朴素唯物与历史进化论的中国先声。'},
+'吴敬梓':{t:'《儒林外史》作者',l:'1701—1754',tl:[
+['家变','出身科举世家，父亡后族人夺产，看尽世态炎凉'],
+['散财','十年散尽遗产，被乡里视为"败家子"，移居南京'],
+['代表作','穷困中著《儒林外史》：范进中举、严监生两根灯草——讽刺文学立此存照'],
+['结局','冬夜绕城步行取暖谓之"暖足"，卒时床头仅剩几分银']],
+ev:'鲁迅评"秉持公心，指擿时弊"——中国讽刺小说的开山，笑声里全是眼泪。'},
+'和珅':{t:'清代权臣 · 史上巨贪',l:'1750—1799',a:['和致斋'],tl:[
+['发迹','满洲正红旗侍卫出身，精四种语言，办事干练，得乾隆殊宠'],
+['专权','兼军机大臣、户部、内务府等数十要职二十余年，卖官鬻爵'],
+['结局','乾隆崩后十五日，嘉庆赐白绫；抄家所得一说折银八亿两，时谚"和珅跌倒，嘉庆吃饱"'],
+['轶闻','设"议罪银"让官员花钱赎罪，制度性腐败的发明人']],
+ev:'盛世的蛀洞样本：一个人的家产约等于国库十五年收入——乾隆盛世的另一份成绩单。'},
+'严复':{t:'启蒙思想家 · 翻译家',l:'1854—1921',a:['严几道'],tl:[
+['留英','福州船政学堂首届，1877年留学格林尼治皇家海军学院'],
+['代表作','甲午败后译赫胥黎《天演论》："物竞天择，适者生存"举国震动'],
+['译事','再译《原富》《法意》《群己权界论》等八大名著，立"信达雅"之标'],
+['晚年','任北大首任校长；思想趋保守，列名筹安会']],
+ev:'一支译笔敲响救亡警钟——梁启超胡适鲁迅那代人，都是读《天演论》长大的。'},
+'谭嗣同':{t:'戊戌六君子',l:'1865—1898',a:['谭复生'],tl:[
+['代表作','《仁学》冲决网罗，斥纲常名教'],
+['变法','1898年入军机四卿，参与新政百日'],
+['拒逃','政变作，拒绝出走："各国变法无不从流血而成，今中国未闻有因变法而流血者，请自嗣同始"'],
+['就义','狱壁题"我自横刀向天笑，去留肝胆两昆仑"，菜市口就义，年三十三']],
+ev:'用生命给变法定价的人——他选择留下的那一刻，改良与革命的分水岭已经划出。'},
+'徐悲鸿':{t:'现代画家 · 美术教育家',l:'1895—1953',tl:[
+['留法','1919年公费留巴黎习西画八年'],
+['主张','倡"素描为一切造型艺术之基础"，改良中国画'],
+['代表作','《奔马图》《愚公移山》《田横五百士》——抗战中以画笔鼓与呼'],
+['教育','执掌中央大学艺术系、北平艺专，新中国首任中央美院院长；护持齐白石、发掘傅抱石']],
+ev:'那匹昂首的奔马成为民族精神的图腾；中国现代美术教育的骨架多半由他搭起。'},
+'林徽因·梁思成':{t:'中国建筑学的开创伉俪',l:'1904—1955 / 1901—1972',a:['林徽因','梁思成'],tl:[
+['留学','同入宾夕法尼亚大学；建筑系不收女生，林修美术辅修建筑课程'],
+['田野','十五年考察十五省两百余县两千余处古建；1937年发现唐构佛光寺，打破"中国无唐代木构"断言'],
+['代表作','梁著《中国建筑史》《图像中国建筑史》；林参与设计国徽与人民英雄纪念碑'],
+['守护','二战中为盟军标注日本京都奈良古建免炸；力主保护北京城墙未果'],
+['结局','林1955年病逝；梁晚年蒙冤，1972年去世']],
+ev:'他们用尺子和相机抢在战火前给古建筑"上了户口"——中国建筑学从夫妇二人的行囊里诞生。'},
+'陈寅恪':{t:'史学大师',l:'1890—1969',tl:[
+['游学','留学日欧美十六年，通十余种文字，不求学位只求学问'],
+['清华','1925年为清华国学院四大导师之一，人称"教授的教授"'],
+['代表作','《隋唐制度渊源略论稿》《元白诗笺证稿》；晚年目盲膑足口述《柳如是别传》八十万言'],
+['风骨','为王国维撰碑铭"独立之精神，自由之思想"——亦其一生自况'],
+['结局','文革中备受折磨，1969年含冤去世']],
+ev:'"四不讲"的课堂与目盲后的巨著，共同诠释了何为学人的尊严。'},
+'闻一多':{t:'诗人 · 学者 · 民主斗士',l:'1899—1946',tl:[
+['新诗','《红烛》《死水》立"三美"之论；《七子之歌》1925年为澳门等七地而作'],
+['学者','西南联大教授，治《诗经》《楚辞》唐诗，蓄须明志八年'],
+['最后一次讲演','1946年李公朴遇刺，他拍案而起"前脚跨出大门，后脚就不准备再跨进大门"'],
+['殉难','当日下午即被特务枪杀于昆明街头，年四十七']],
+ev:'从唯美诗人到横眉斗士——朱自清评"他是斗士，但又是诗人和学者"。'},
+'陈景润':{t:'数学家',l:'1933—1996',tl:[
+['师承','厦门大学毕业，华罗庚慧眼调入中科院数学所'],
+['1+2','1966年证明"每个充分大的偶数=一个素数+至多两个素数之积"，1973年发表完整证明，国际称"陈氏定理"'],
+['环境','六平方米小屋、煤油灯下演算的麻袋草稿'],
+['影响','1978年徐迟报告文学《哥德巴赫猜想》使其家喻户晓，点燃一代人的科学热']],
+ev:'距离哥德巴赫猜想最终证明最近的人——至今无人越过"1+2"这座山。'},
+'王选':{t:'计算机专家 · 汉字激光照排之父',l:'1937—2006',tl:[
+['选题','1975年抱病攻关汉字精密照排，跳过二三代直取第四代激光方案'],
+['突破','发明汉字字形信息压缩与高速还原技术，1981年原理性样机通过鉴定'],
+['产业化','方正激光照排横扫国内外中文报业——"告别铅与火，迎来光与电"'],
+['身后','2002年获国家最高科学技术奖；小行星4913号以其命名']],
+ev:'让汉字撑过了数字化生死关——毕昇之后，中文印刷的第二次革命。'},
+'南仁东':{t:'天文学家 · 中国天眼之父',l:'1945—2017',tl:[
+['构想','1994年提出建500米口径球面射电望远镜（FAST）'],
+['选址','十二年踏遍贵州喀斯特洼地三百余处，选定平塘大窝凼'],
+['攻坚','主动反射面、馈源舱索驱动等关键技术自主攻克，2016年落成——世界最大单口径射电望远镜'],
+['结局','落成次年病逝；被追授"人民科学家"称号']],
+ev:'用二十二年把一张草图变成大国重器——FAST已发现上千颗脉冲星，仍在替他仰望。'},
+'佛图澄':{t:'西域高僧',l:'232—348',tl:[
+['东来','西域龟兹人，晋怀帝时至洛阳，年已七十九'],
+['化暴','以"神异"折服石勒石虎，谏杀戮："帝王事佛，当在心体……岂可专以杀戮为化"'],
+['弘法','门徒近万，兴寺八百九十余所；道安即出其门下'],
+['影响','后赵举国奉佛，汉人正式获准出家自此始']],
+ev:'在最嗜杀的君主身边做"刹车片"——佛教在北方扎根，他是第一个打桩的人。'},
+'萧绰':{t:'辽承天太后 · 政治家',l:'953—1009',a:['萧燕燕','承天太后'],tl:[
+['临朝','982年景宗崩，二十九岁摄政，泣问"母寡子弱，族属雄强，边防未靖，奈何"，韩德让耶律斜轸誓辅之'],
+['治国','任贤修法，劝农薄赋，辽由此极盛'],
+['澶渊','1004年亲率大军南征，阵前主帅中弩身亡仍稳住战局，以打促和签澶渊之盟'],
+['结局','摄政二十七年归政圣宗，同年病逝']],
+ev:'马上能督军、帐中能治国——契丹帝国的黄金时代，实际是一位太后的作品。'},
+'骨勒茂才':{t:'西夏学者 · 双语辞书编纂者',l:'12世纪',tl:[
+['代表作','1190年编成《番汉合时掌中珠》：西夏文与汉文逐词对照、互注读音'],
+['体例','"不学番言，则岂和番人之众；不会汉语，则岂入汉人之数"——序言点明双语共存'],
+['影响','1909年黑水城出土，成为破译西夏文的钥匙']],
+ev:'一部八百年前的双语小词典，让一门死文字在二十世纪复活——功莫大焉。'},
+'完颜宗弼':{t:'金国统帅',l:'？—1148',a:['金兀术','斡啜'],tl:[
+['南侵','1129年"搜山检海捉赵构"，追宋高宗直到海上'],
+['黄天荡','1130年被韩世忠八千兵困四十八日，凿老鹳河故道夜遁'],
+['对手','郾城、颍昌连败于岳飞铁骑，叹"撼山易，撼岳家军难"（传）'],
+['主盟','1141年主导绍兴和议，尽收河南陕西之地；官至太师都元帅']],
+ev:'演义里的头号反派，正史中金国的军政柱石——一个人的两副面孔，取决于谁在讲故事。'},
+'速不台':{t:'蒙古名将 · 四獒之一',l:'1176—1248',tl:[
+['西征','与哲别追花剌子模王至里海，顺势环里海远征——史上最远奔袭之一'],
+['迦勒迦河','1223年以佯退诱敌九日，全歼罗斯联军'],
+['长子西征','实际统帅，1241年赛约河之战一日破匈牙利大军'],
+['战绩','一生征服三十二国、大小六十五战，足迹从黄河到多瑙河']],
+ev:'拿破仑时代的欧洲军校仍在复盘他的战役——机动战的古典极限由他画定。'},
+'拔都':{t:'金帐汗国建立者',l:'1207—1256',a:['巴都'],tl:[
+['受封','术赤次子，继领咸海以西"长子西征"统帅之名'],
+['征罗斯','1237—1240年连下莫斯科、基辅，罗斯诸公国臣服两百四十年'],
+['入欧','1241年两路破波兰匈牙利，兵锋抵亚得里亚海；窝阔台死讯传来班师'],
+['建国','于伏尔加河下游建萨莱城，立金帐汗国；扶立蒙哥有定策之功']],
+ev:'"鞑靼之轭"改写俄罗斯史——莫斯科的崛起，最初是替金帐汗收税起家的。'},
+'旭烈兀':{t:'伊利汗国建立者',l:'1218—1265',tl:[
+['西征','1253年奉蒙哥之命三征西亚'],
+['灭木剌夷','1256年拔"山中老人"阿萨辛派诸堡，终结刺客传说'],
+['陷巴格达','1258年破城，末代哈里发被裹毡踏死，五百年阿拔斯王朝亡'],
+['受挫','1260年艾因·贾鲁之战偏师败于马穆鲁克——蒙古西扩的终点'],
+['建国','据波斯建伊利汗国，兄弟汗国分治欧亚']],
+ev:'一战抹去阿拔斯，伊斯兰世界的"巴格达时代"就此闭幕——蒙古改写中东的那只手。'},
+/* --- 世界 --- */
+'谢里曼':{t:'德国考古学家 · 特洛伊发现者',l:'1822—1890',a:['海因里希·施里曼'],tl:[
+['经商','杂货学徒出身，自学十余门语言，靠国际贸易与淘金热暴富'],
+['圆梦','四十六岁退休，携《荷马史诗》按图索骥'],
+['特洛伊','1871年起发掘希萨利克丘，掘出九层古城与"普里阿摩斯宝藏"'],
+['迈锡尼','1876年发掘竖井墓，出土黄金面具，电告国王"我凝视了阿伽门农的脸"'],
+['争议','早年粗暴挖掘破坏地层，宝藏断代亦有误——功过并存']],
+ev:'他证明神话背后可能藏着真实的城市——业余者的执念开启了爱琴考古学。'},
+'伊文思':{t:'英国考古学家 · 克诺索斯发掘者',l:'1851—1941',a:['阿瑟·伊文思'],tl:[
+['线索','在雅典古董市场追查刻符号的印章石至克里特岛'],
+['发掘','1900年起发掘克诺索斯，揭出千室宫殿、壁画与排水系统'],
+['命名','以传说中的米诺斯王为这一文明命名"米诺斯文明"'],
+['代表作','四卷本《米诺斯宫殿》；区分线形文字A与B'],
+['争议','用混凝土大规模"复原"宫殿，美观却失真']],
+ev:'把欧洲文明史往前推了一千五百年——虽然他复原的宫殿一半是二十世纪的想象。'},
+'泰勒斯':{t:'古希腊哲学家 · 科学之祖',l:'约前624—前546',tl:[
+['第一人','首个不用神话解释世界的人："万物源于水"'],
+['预言日食','据传预测前585年5月28日日食，两军罢战——科学史的象征性起点'],
+['几何','泰勒斯定理：半圆上的圆周角是直角；据传以影长测金字塔高'],
+['轶闻','仰观星象跌入井中被女仆嘲笑；又以垄断榨油机证明"哲学家想富就能富"']],
+ev:'哲学与科学共同的第一页——亚里士多德称他为"哲学之父"。'},
+'埃斯库罗斯':{t:'古希腊悲剧之父',l:'前525—前456',tl:[
+['战士','亲历马拉松与萨拉米斯之战，墓志铭只提战功不提戏剧'],
+['革新','将演员从一人增至二人——对话由此诞生，戏剧脱离颂歌'],
+['代表作','《被缚的普罗米修斯》《阿伽门农》（俄瑞斯忒亚三部曲，现存唯一完整三部曲）'],
+['传说','死因据传是鹰误把他的秃头当石头，掷龟砸中']],
+ev:'悲剧从他手里获得了形状——没有第二个演员，就没有此后一切戏剧。'},
+'阿里斯托芬':{t:'古希腊喜剧之父',l:'约前446—前386',tl:[
+['锋芒','当着克里昂本人的面上演讽刺他的《骑士》'],
+['代表作','《云》嘲弄苏格拉底，《鸟》建"云中鹁鸪国"，《吕西斯特拉忒》写女人罢战'],
+['影响','现存十一部完整喜剧——旧喜剧唯一传世者']],
+ev:'政治讽刺喜剧的祖师爷；两千四百年前的段子，今天读仍会笑出声。'},
+'菲狄亚斯':{t:'古希腊雕塑大师',l:'约前480—前430',tl:[
+['总监','伯里克利委任其总监卫城工程'],
+['代表作','帕特农神庙雅典娜巨像与奥林匹亚宙斯像（古代七大奇迹之一），皆黄金象牙镶嵌'],
+['结局','遭政敌以侵吞黄金、渎神罪构陷，或死于狱中'],
+['实证','1958年奥林匹亚出土刻"我属于菲狄亚斯"的陶杯，确认其工作室']],
+ev:'古典理想美的定义者——西方雕塑此后两千年都在回望他立下的标准。'},
+'德谟克利特':{t:'古希腊哲学家 · 原子论者',l:'约前460—前370',tl:[
+['游学','散尽遗产游历埃及巴比伦，"我走过的地方比谁都多"'],
+['原子论','万物由不可分的原子在虚空中运动组合而成——纯思辨抵达的物理直觉'],
+['笑哲','凡事付之一笑，人称"笑的哲学家"，与"哭的哲学家"赫拉克利特对举'],
+['影响','经伊壁鸠鲁、卢克莱修传承，启发近代原子科学']],
+ev:'两千三百年后道尔顿重拾"原子"一词——猜对世界底层结构的第一人。'},
+'托勒密一世':{t:'埃及托勒密王朝开创者',l:'约前367—前282',a:['托勒密·索特尔'],tl:[
+['部将','亚历山大幼年伙伴与贴身护卫，随征全程'],
+['夺尸','大帝死后劫其灵柩入埃及——合法性的最强道具'],
+['建国','前305年称王，开三百年托勒密王朝'],
+['文治','创建亚历山大图书馆与缪斯宫（博物馆一词源于此）；亲撰亚历山大远征史'],
+['轶闻','欧几里得答他"几何无王者之路"']],
+ev:'继业者中唯一善终且传国最久者——武功之外，给人类留了一座图书馆。'},
+'塞琉古一世':{t:'塞琉古帝国开创者',l:'约前358—前281',a:['塞琉古·尼卡托'],tl:[
+['崛起','亚历山大死后从巴比伦总督起家，"回归巴比伦"之夜被定为纪元（塞琉古纪元，史上首个连续纪年）'],
+['扩张','击败安提柯，据有从小亚到印度河的最大继业者版图'],
+['交换','以印度诸省换孔雀王朝五百头战象，赢得伊普苏斯之战'],
+['结局','统一在望之际遇刺，年近八十'],
+['建城','兴建安条克、塞琉西亚等数十希腊城市']],
+ev:'希腊化亚洲的奠基人——他撒下的城市网，让希腊语在中东通行了千年。'},
+'格拉古兄弟':{t:'罗马改革家兄弟',l:'前163—前133 / 前154—前121',a:['提比略·格拉古','盖约·格拉古'],tl:[
+['背景','平民沦为无地流民，兄弟先后任保民官推土地改革'],
+['提比略','前133年强推土地法，被元老们以凳脚打死，尸投台伯河'],
+['盖约','十年后再举改革旗，扩及粮价与公民权，前121年兵败自尽，头颅按重量兑黄金'],
+['影响','三千支持者被清洗——共和国自此进入百年内战循环']],
+ev:'罗马共和国的体检报告：当改革者只能死于街头，共和的倒计时已经开始。'},
+'卢克莱修':{t:'罗马哲理诗人',l:'约前99—前55',tl:[
+['代表作','六卷长诗《物性论》，以诗体阐发伊壁鸠鲁原子论'],
+['主旨','宇宙由原子与虚空构成，神不干预，灵魂随身体消散，故"死不足惧"'],
+['湮没','中世纪几近失传，1417年布拉乔利尼在德国修道院抄出孤本'],
+['影响','重见天日后深刻影响文艺复兴与启蒙运动']],
+ev:'一部差点消失的长诗，被史家称为"世界转向现代的枢纽"（《大转向》）。'},
+'李维':{t:'罗马历史学家',l:'前59—17',a:['提图斯·李维'],tl:[
+['代表作','《罗马自建城以来史》142卷，从罗慕路斯写到当代，耗时四十年'],
+['幸存','今存35卷，余以摘要传世'],
+['风格','以道德兴衰解释国运，文辞宏丽；奥古斯都容其共和倾向，称之"庞培派"'],
+['影响','马基雅维利《论李维》即以其书为底本']],
+ev:'罗马人自己的"史记"——后世关于早期罗马的几乎全部想象，都来自李维的笔。'},
+'老普林尼':{t:'罗马博物学家',l:'23—79',a:['普林尼'],tl:[
+['勤学','军政繁忙仍昼夜摘录，"没有一本书坏到毫无可取"'],
+['代表作','《博物志》37卷两万条目，包罗天文地理动植物矿物——古代最大百科全书'],
+['殉学','79年维苏威喷发，时任舰队司令，驾船驰援并近观火山，窒息于斯塔比亚海滩'],
+['见证','其甥小普林尼两封书信记录喷发全程，"普林尼式喷发"由此命名']],
+ev:'为好奇心殉职的百科全书之父——此后一千五百年，欧洲人查资料先翻普林尼。'},
+'普鲁塔克':{t:'希腊传记作家 · 伦理学家',l:'约46—120',tl:[
+['身份','喀罗尼亚人，德尔斐阿波罗神庙终身祭司'],
+['代表作','《希腊罗马名人传》五十篇，希腊罗马人物两两对照（亚历山大对凯撒等）'],
+['另著','《道德论丛》七十余篇'],
+['影响','莎士比亚三部罗马剧直接取材于此；卢梭、爱默生的枕边书']],
+ev:'西方传记文学之祖——欧洲人两千年来的英雄观，一半是普鲁塔克塑造的。'},
+'托勒密':{t:'希腊天文学家 · 地理学家',l:'约100—170',a:['克劳狄乌斯·托勒密'],tl:[
+['代表作','《天文学大成》十三卷：本轮均轮体系精确预测行星位置'],
+['地理','《地理学》以经纬网标注八千地名——文艺复兴地图学的起点，哥伦布的信心之源（他把地球算小了）'],
+['光学占星','另著《光学》《四书》，涉猎折射与占星'],
+['影响','地心说统治天文学一千四百年，直至哥白尼']],
+ev:'"托勒密体系"错了，但错得极其精密——科学史证明：一个可计算的错误模型，也能撑起千年文明的天文学。'},
+'奥古斯丁':{t:'神学家 · 教父哲学集大成者',l:'354—430',a:['希波的奥古斯丁','圣奥古斯丁'],tl:[
+['浪子','北非塔加斯特人，青年放荡，信摩尼教九年'],
+['皈依','386年米兰花园闻童声"拿起来读"，翻开保罗书信而痛悔——《忏悔录》所记名场面'],
+['主教','396年任希波主教三十四年'],
+['代表作','《忏悔录》开西方自传先河；罗马陷落后著《上帝之城》回应"基督教亡国论"'],
+['结局','430年汪达尔人围希波城中病逝']],
+ev:'把希腊哲学接入基督教的总工程师——此后一千年欧洲人的心灵语法由他编写。'},
+'普罗科匹厄斯':{t:'拜占庭历史学家',l:'约500—565',tl:[
+['随军','任贝利撒留的机要秘书，亲历波斯、汪达尔、哥特诸战'],
+['代表作','《战史》八卷记查士丁尼武功；《建筑》颂圣索菲亚'],
+['秘史','另有身后才敢面世的《秘史》：痛骂皇帝皇后"恶魔转世"——正史与黑料出自同一支笔'],
+['价值','对542年查士丁尼大瘟疫的记载为医学史珍贵档案']],
+ev:'官方史官的两副笔墨，成了后世窥见拜占庭宫廷双面真相的唯一缝隙。'},
+'西里尔·美多德':{t:'斯拉夫字母创制者 · 传教士兄弟',l:'约826—869 / 约815—885',a:['西里尔','美多德','圣西里尔'],tl:[
+['受命','863年应摩拉维亚大公之请，自拜占庭北上传教'],
+['创字','为翻译圣经创格拉哥里字母——斯拉夫语首次拥有文字'],
+['斗争','顶住"圣语只能有三种"之说，坚持斯拉夫语礼拜'],
+['影响','弟子在保加利亚改良为西里尔字母，今为俄语等数十种语言所用']],
+ev:'两位传教士给半个欧洲发明了字母表——俄乌塞保诸国至今在用他们的遗产。'},
+'艾因哈德':{t:'法兰克学者 · 查理曼传记作者',l:'约775—840',tl:[
+['入宫','受教于阿尔琴，入查理曼宫廷学园，身材矮小而多才，绰号"小矮人"'],
+['亲信','掌宫廷营造，参与亚琛宫殿礼拜堂工程'],
+['代表作','仿苏维托尼乌斯体例著《查理大帝传》——中世纪最佳传记，大帝形象（高大、爱洗温泉、枕下藏写字板练字）皆出此书'],
+['晚年','退隐修道院，与妻通信论学']],
+ev:'没有艾因哈德，"欧洲之父"只是编年史里一个名字——传记让查理曼活到今天。'},
+'彼特拉克':{t:'人文主义之父 · 桂冠诗人',l:'1304—1374',tl:[
+['劳拉','1327年阿维尼翁教堂惊鸿一瞥，为劳拉写十四行诗终生——《歌集》366首'],
+['加冕','1341年罗马卡皮托利山受桂冠——古典传统复活的仪式'],
+['寻书','遍访修道院抢救古卷，亲手发现西塞罗书信'],
+['登山','1336年登旺图山"只为看风景"，被称为现代登山与现代心灵的起点'],
+['名言','称此前时代为"黑暗时代"——文艺复兴的自我意识由此命名']],
+ev:'第一个"现代人"：向古人学习、向内心提问——文艺复兴从他的书桌开始。'},
+'薄伽丘':{t:'意大利作家',l:'1313—1375',tl:[
+['背景','商人私生子，弃商从文于那不勒斯'],
+['代表作','黑死病次年起笔《十日谈》：十青年避疫乡间，十天讲一百个故事——市民社会的浮世绘'],
+['学者','另著《异教诸神谱系》；资助但丁研究，首开《神曲》公开讲座'],
+['友谊','与彼特拉克三十年文字之交，互寄古书']],
+ev:'欧洲近代短篇小说之祖——教士贵族在他笔下第一次被市民的笑声平视。'},
+'莱布尼茨':{t:'德国哲学家 · 数学家 · 通才',l:'1646—1716',tl:[
+['神童','十四岁入莱比锡大学，二十岁遭拒博士学位（嫌太年轻）'],
+['微积分','1675年独立创立微积分，其 dx、∫ 记号沿用至今；与牛顿的优先权之争撕裂欧洲学界'],
+['二进制','发明二进制算术，见《易经》六十四卦图大喜引为印证'],
+['百科式','兼治法学外交地质史学，创建柏林科学院；毕生通信两千余人'],
+['结局','晚年失宠，葬礼冷清，仅秘书送葬']],
+ev:'"最后一个全才"——今天每台计算机的0与1，都在替他说话。'},
+'罗伯斯庇尔':{t:'法国大革命领袖',l:'1758—1794',a:['马克西米连·罗伯斯庇尔'],tl:[
+['不可腐蚀者','阿拉斯律师，以清廉刚直得名"不可腐蚀者"'],
+['雅各宾','1793年入救国委员会，主导恐怖统治："没有美德的恐怖是邪恶的，没有恐怖的美德是无力的"'],
+['顶点','1794年6月主持"最高主宰节"，俨然共和国祭司'],
+['热月','一个月后热月政变，未经审判被送上他送过无数人的断头台，年三十六']],
+ev:'革命吞噬自己儿女的头号例证——理想主义与恐怖统治如何互为表里，他是永远的案例。'},
+'大仲马':{t:'法国小说家',l:'1802—1870',a:['亚历山大·仲马'],tl:[
+['出身','祖母为海地黑奴，父为拿破仑麾下将军'],
+['代表作','1844年《三个火枪手》《基督山伯爵》同年连载——"人人都在读仲马"'],
+['产量','小说剧本三百余卷，雇用写作团队，自嘲"文学工厂"'],
+['豪掷','版税筑"基督山城堡"，宾客如云，散尽复贫'],
+['身后','2002年灵柩迁先贤祠，总统致辞还了这位混血作家迟到的国葬']],
+ev:'通俗小说的珠穆朗玛——一百八十年过去，达达尼昂的剑与基督山的复仇仍在全球畅销。'},
+'德彪西':{t:'法国作曲家 · 印象派音乐开创者',l:'1862—1918',tl:[
+['叛逆','巴黎音乐学院屡因"和声不规范"受责："规则？我只服从我的耳朵"'],
+['东方','1889年巴黎世博会闻爪哇加美兰音乐，大受震动'],
+['代表作','《牧神午后前奏曲》被视为现代音乐开端；《大海》《月光》《佩利亚斯与梅丽桑德》'],
+['风格','全音阶与平行和弦织出光影水色——"音乐的印象派"（他本人讨厌这标签）']],
+ev:'把音乐从德奥体系里解放出来的人——此后的电影配乐、爵士与氛围音乐都欠他一笔。'},
+'乔叟':{t:'英语文学之父',l:'约1343—1400',a:['杰弗里·乔叟'],tl:[
+['多面','酒商之子，历任侍从、外交官、海关监督、议员——业余写作'],
+['转折','出使意大利接触但丁薄伽丘，决意用英语（而非法语拉丁语）写作'],
+['代表作','《坎特伯雷故事集》：三十位朝圣者轮流讲故事，骑士磨坊主巴斯妇人各有声口'],
+['身后','首位葬入威斯敏斯特教堂"诗人角"的作家']],
+ev:'在法语统治的宫廷里给英语正名——莎士比亚之前，英语文学只有一座高峰，就是乔叟。'},
+'库克船长':{t:'英国航海家 · 制图师',l:'1728—1779',a:['詹姆斯·库克'],tl:[
+['出身','雇农之子，煤船学徒自学数学天文'],
+['三次远航','1768年起三下太平洋：首绘新西兰全图、登陆澳大利亚东岸、深入南极圈，证否传说中的"南方大陆"'],
+['防坏血病','强制食用酸菜与柑橘，远航几乎零病亡——航海医学革命'],
+['结局','1779年在夏威夷因小船纠纷被土著杀死'],
+['遗产','太平洋地图基本由他画定，精度沿用百年']],
+ev:'把地球最后一片空白填上的人——太平洋在他之前是传说，在他之后是地图。'},
+'霍金':{t:'英国理论物理学家',l:'1942—2018',a:['斯蒂芬·霍金'],tl:[
+['确诊','二十一岁患渐冻症，医生预言只剩两年'],
+['贡献','1970年与彭罗斯证奇点定理；1974年提出黑洞辐射（霍金辐射）——量子力学与广义相对论的第一次握手'],
+['代表作','1988年《时间简史》售逾2500万册，科普史奇迹'],
+['讲席','任剑桥卢卡斯数学教授三十年——牛顿坐过的椅子'],
+['结局','轮椅与合成语音伴随半世纪，2018年逝，骨灰葬牛顿与达尔文之间']],
+ev:'被禁锢的身体与最自由的头脑——他让全世界的普通人第一次试着思考黑洞与时间。'},
+'科尔特斯':{t:'西班牙征服者',l:'1485—1547',a:['埃尔南·科尔特斯'],tl:[
+['出发','1519年率六百人、十六匹马登陆墨西哥，凿沉船只断退路'],
+['联盟','联合特拉斯卡拉等仇视阿兹特克的部族，兵力放大百倍'],
+['征服','擒蒙特祖马二世；"悲伤之夜"败退后卷土重来，1521年围陷特诺奇蒂特兰'],
+['晚年','受王室猜忌，讼案缠身，郁郁死于西班牙']],
+ev:'六百人灭一帝国——枪炮、马匹、天花与土著盟军的组合，殖民征服的原始剧本。'},
+'皮萨罗':{t:'西班牙征服者',l:'约1475—1541',a:['弗朗西斯科·皮萨罗'],tl:[
+['出身','养猪的私生子，不识字，五十岁尚一事无成'],
+['卡哈马卡','1532年以一百八十人设伏，一小时屠数千、生擒印加皇帝阿塔瓦尔帕'],
+['赎金','收满一屋黄金两屋白银后仍处死皇帝'],
+['建都','1535年建利马城'],
+['结局','1541年被同伙之子刺杀于自家宅邸——分赃内讧的了局']],
+ev:'比科尔特斯更赤裸的版本：贪婪、背信与胆量的极限组合，安第斯文明因此改道。'},
+'委拉斯开兹':{t:'西班牙宫廷画家',l:'1599—1660',a:['委拉斯凯兹'],tl:[
+['宫廷','二十四岁为腓力四世画像，从此专职宫廷三十七年'],
+['罗马','两次赴意大利购画，为教皇英诺森十世画像，教皇叹"太真实了"'],
+['代表作','《宫娥》：画家、公主、镜中国王同框——绘画史最烧脑的一幅画'],
+['影响','马奈称其"画家中的画家"；毕加索晚年临摹《宫娥》五十八遍']],
+ev:'用最松的笔触画出最真的空气——印象派尊他为三百年前的同行。'},
+'高迪':{t:'西班牙建筑师',l:'1852—1926',a:['安东尼·高迪'],tl:[
+['信条','"直线属于人类，曲线属于上帝"'],
+['代表作','米拉之家、巴特罗之家、古埃尔公园——七件作品列世界遗产'],
+['圣家堂','1883年起接手，后半生只做这一件事，晚年住进工地'],
+['结局','1926年被有轨电车撞倒，衣着褴褛被当流浪汉延误救治而逝'],
+['未完','圣家堂至今仍在施工，成为"活着的建筑"']],
+ev:'把建筑长成生物的人——巴塞罗那的天际线，是他一个人的想象力。'},
+'罗蒙诺索夫':{t:'俄国科学家 · 莫斯科大学创办人',l:'1711—1765',tl:[
+['求学','渔家子十九岁隐瞒出身，随鱼车徒步千里赴莫斯科求学'],
+['科学','早于拉瓦锡表述质量守恒思想；1761年观测金星凌日推断金星有大气'],
+['文学','改革俄语诗律与文体，奠定现代俄语书面语'],
+['建校','1755年推动创办莫斯科大学——今以其名命名']],
+ev:'普希金说"他本人就是我们的第一所大学"——俄国科学与俄语文学的共同起点。'},
+'屠格涅夫':{t:'俄国作家',l:'1818—1883',tl:[
+['代表作','《猎人笔记》以猎人视角写农奴之苦，触怒当局遭软禁——被认为推动了废除农奴制'],
+['名作','《父与子》塑造"虚无主义者"巴扎罗夫，"多余人"与"新人"之辩由此引爆'],
+['桥梁','长居法国，与福楼拜左拉交游，把俄国文学介绍给欧洲'],
+['绝笔','病榻致信托尔斯泰："我的朋友，回到文学中来吧"']],
+ev:'俄国文学最优雅的一支笔，也是俄欧之间最重要的一座桥。'},
+'朱可夫':{t:'苏联元帅',l:'1896—1974',a:['格奥尔吉·朱可夫'],tl:[
+['成名','1939年诺门罕重创日军'],
+['救火','莫斯科、列宁格勒、斯大林格勒、库尔斯克——哪里危急哪里就有朱可夫'],
+['柏林','1945年攻克柏林，代表苏联受降，红场胜利阅兵骑白马检阅'],
+['沉浮','战后功高震主两度贬黜，1957年被赫鲁晓夫解除一切职务'],
+['代表作','回忆录《回忆与思考》一版再版']],
+ev:'四获苏联英雄称号唯一之人——卫国战争的胜利，一半刻着他的名字。'},
+'帕斯捷尔纳克':{t:'苏联诗人 · 小说家',l:'1890—1960',tl:[
+['诗名','《生活，我的姐妹》确立诗坛地位'],
+['代表作','《日瓦戈医生》国内被拒，1957年在意大利出版震动世界'],
+['诺奖','1958年获诺贝尔文学奖，遭举国批判，被迫拒领："我像兽栏里的困兽"'],
+['结局','两年后郁郁而终；1988年小说才在苏联全文刊出，其子1989年代领诺奖']],
+ev:'一部小说对抗一个时代——日瓦戈的命运，就是二十世纪知识分子的命运。'},
+'索尔仁尼琴':{t:'俄国作家 · 见证者',l:'1918—2008',tl:[
+['劳改','1945年因信中议论斯大林被判八年劳改'],
+['成名','1962年《伊凡·杰尼索维奇的一天》经赫鲁晓夫特批发表——劳改营题材首次公开'],
+['代表作','秘密写就《古拉格群岛》，1973年海外出版'],
+['流放','1970年获诺奖，1974年被剥夺国籍驱逐出境，隐居美国佛蒙特十八年'],
+['归国','1994年乘火车横穿俄罗斯返乡']],
+ev:'"一句真话比整个世界的分量还重"——他用档案与血泪给一个体制留下无法销毁的证词。'},
+'比鲁尼':{t:'花剌子模学者 · 百科全书式科学家',l:'973—1048',a:['阿尔·比鲁尼'],tl:[
+['测地','以山顶测地平线俯角推算地球半径，误差不足百分之一'],
+['印度学','随伽色尼王朝征印，学梵语著《印度志》——比较宗教与人类学先驱'],
+['代表作','《古代诸国编年史》比较各族历法；讨论地球自转的可能性'],
+['产量','著述一百四十六种，涵盖天文数学药物矿物']],
+ev:'被称为"十一世纪最伟大的头脑"——月球上有环形山以他命名。'},
+'许蕾姆苏丹':{t:'奥斯曼皇后 · 从女奴到掌权者',l:'约1504—1558',a:['罗克塞拉娜'],tl:[
+['入宫','鲁塞尼亚（今乌克兰）神父之女，被克里米亚鞑靼掳卖入后宫'],
+['破例','苏莱曼大帝为她遣散后宫、正式迎娶——奥斯曼苏丹娶后宫女奴之首例'],
+['干政','参与外交通信、修建清真寺与济贫所，开"女性苏丹权"时代'],
+['宫斗','其子塞利姆最终继位，代价是储君穆斯塔法被处死']],
+ev:'从战利品到帝国的实际女主人——她改写了奥斯曼后宫与权力的规则。'},
+'埃夫利亚·切莱比':{t:'奥斯曼旅行家',l:'1611—1682',tl:[
+['启程','自述梦中先知赐福"旅行"，遂周游四十年'],
+['足迹','纵横帝国全境及维也纳、波斯、埃及、苏丹'],
+['代表作','十卷《旅行之书》（Seyahatname）：城市、方言、轶闻、奇谈无所不记'],
+['风格','真实与夸张齐飞——自称目睹会飞的人与七千岁老者']],
+ev:'十七世纪奥斯曼世界的"活地图"——今天研究那个帝国的日常生活，人人都得翻他。'},
+'安贝德卡尔':{t:'印度宪法之父 · 贱民解放领袖',l:'1891—1956',a:['阿姆倍伽尔'],tl:[
+['出身','"不可接触者"种姓，上学被隔离于教室角落'],
+['求学','获美国哥伦比亚大学、伦敦政经双博士——同代印度人学历之最'],
+['抗争','领导焚烧《摩奴法论》、争取贱民饮水入庙权；与甘地就贱民选区激烈交锋'],
+['制宪','1947年任制宪起草委员会主席，宪法明文废除"不可接触制"'],
+['皈依','1956年临终前率五十万追随者集体改宗佛教']],
+ev:'从被隔离的角落走到宪法起草席——印度平等条款的每一行，都有他的指纹。'},
+'拉曼':{t:'印度物理学家',l:'1888—1970',a:['钱德拉塞卡拉·拉曼'],tl:[
+['起点','殖民地财政部小职员，业余在简陋实验室研究声学光学'],
+['之问','1921年航海归途自问"海为什么是蓝的"，不满瑞利的解释'],
+['发现','1928年发现光的非弹性散射——拉曼效应，仅凭价值数百卢比的设备'],
+['诺奖','1930年获诺贝尔物理学奖——亚洲科学家第一人'],
+['建制','创办拉曼研究所，印度以2月28日为"国家科学日"']],
+ev:'拉曼光谱今天仍在每个化学实验室服役——一个"业余"科学家给殖民地科学正了名。'},
+});
+
+/* ============ 顶级名人：代表作 · 主要贡献 · 名言 ============ */
+/* WORKS[人名] = {q:名言, w:[[类别,内容]...]} */
+const WORKS = {
+/* --- 中国思想 · 文史 --- */
+'孔子':{q:'己所不欲，勿施于人。',w:[
+['代表作','弟子辑《<b>论语</b>》；相传整理《诗》《书》《礼》《易》，作《春秋》'],
+['核心思想','仁、礼、中庸；"有教无类""因材施教"'],
+['贡献','首创私学，把知识从贵族手中释放；奠定东亚两千年的伦理与教育范式'],
+['名句','三人行必有我师焉 · 学而时习之 · 知之为知之，不知为不知']]},
+'老子':{q:'上善若水。水善利万物而不争。',w:[
+['代表作','《<b>道德经</b>》五千言（又名《老子》）'],
+['核心思想','道法自然、无为而治、柔弱胜刚强、祸福相倚'],
+['贡献','道家开山；全球译本数量仅次于《圣经》的中国典籍'],
+['名句','道可道，非常道 · 千里之行，始于足下 · 治大国若烹小鲜']]},
+'孙武':{q:'知彼知己，百战不殆。',w:[
+['代表作','《<b>孙子兵法</b>》十三篇'],
+['核心思想','慎战、全胜（不战而屈人之兵）、以正合以奇胜、因敌制胜'],
+['贡献','世界现存最早的兵书，被译成数十种语言，进入各国军校与商学院'],
+['名句','兵者，诡道也 · 上兵伐谋 · 兵无常势，水无常形']]},
+'孟子':{q:'富贵不能淫，贫贱不能移，威武不能屈。',w:[
+['代表作','《<b>孟子</b>》七篇'],
+['核心思想','性善论、仁政、民贵君轻、浩然之气'],
+['贡献','儒家"亚圣"，把孔子之仁推向政治哲学；宋以后《孟子》列四书'],
+['名句','天将降大任于是人也 · 老吾老以及人之老 · 得道多助，失道寡助']]},
+'庄子':{q:'吾生也有涯，而知也无涯。',w:[
+['代表作','《<b>庄子</b>》（《南华经》）内七篇为其手笔'],
+['核心思想','逍遥游、齐物论、物我两忘、无用之用'],
+['贡献','以寓言与诗性哲思重塑道家；中国文学想象力的第一座高峰'],
+['名篇','逍遥游 · 齐物论 · 庖丁解牛 · 庄周梦蝶 · 濠梁观鱼']]},
+'司马迁':{q:'人固有一死，或重于泰山，或轻于鸿毛。',w:[
+['代表作','《<b>史记</b>》130篇52万字，上起黄帝下讫汉武'],
+['体例创新','首创纪传体通史：本纪·世家·列传·表·书'],
+['贡献','"史家之绝唱，无韵之离骚"（鲁迅）；二十四史体例自此定型'],
+['名句','究天人之际，通古今之变，成一家之言 · 士为知己者死']]},
+'李白':{q:'天生我材必有用，千金散尽还复来。',w:[
+['代表作','《<b>将进酒</b>》《蜀道难》《静夜思》《梦游天姥吟留别》《望庐山瀑布》'],
+['艺术成就','存诗约千首；乐府歌行纵横恣肆，想象雄奇，被誉"诗仙"'],
+['名句','飞流直下三千尺 · 长风破浪会有时 · 抽刀断水水更流 · 仰天大笑出门去'],
+['影响','中国浪漫主义诗歌的最高峰，杜甫赞"笔落惊风雨，诗成泣鬼神"']]},
+'杜甫':{q:'安得广厦千万间，大庇天下寒士俱欢颜。',w:[
+['代表作','"三吏""三别"、《<b>春望</b>》《茅屋为秋风所破歌》《登高》《秋兴八首》'],
+['艺术成就','存诗1400余首；沉郁顿挫，律诗集大成，被尊"诗圣"、其诗称"诗史"'],
+['名句','国破山河在 · 会当凌绝顶，一览众山小 · 朱门酒肉臭，路有冻死骨'],
+['影响','以个人笔墨承载时代苦难，确立中国诗歌的现实主义正脉']]},
+'苏轼':{q:'莫听穿林打叶声，何妨吟啸且徐行。',w:[
+['诗词','《<b>念奴娇·赤壁怀古</b>》《水调歌头·明月几时有》《定风波》《江城子》'],
+['散文','前后《赤壁赋》《石钟山记》；唐宋八大家之一'],
+['书画','《寒食帖》列"天下第三行书"；开文人写意画风'],
+['其他','美食（东坡肉）、水利（苏堤）皆有名；诗文书画俱臻一流的全才'],
+['名句','但愿人长久，千里共婵娟 · 大江东去 · 人生如逆旅，我亦是行人']]},
+'王阳明':{q:'知行合一 · 心即理 · 致良知。',w:[
+['代表作','《<b>传习录</b>》《大学问》'],
+['核心思想','龙场悟道"圣人之道，吾性自足"；心外无物，知行合一，致良知'],
+['事功','平定宁王之乱等，立德立功立言"三不朽"'],
+['影响','心学东传日本，成为明治维新志士的精神资源（西乡隆盛"一生俯首拜阳明"）']]},
+'鲁迅':{q:'横眉冷对千夫指，俯首甘为孺子牛。',w:[
+['小说','《<b>呐喊</b>》《彷徨》——《狂人日记》《阿Q正传》《孔乙己》《故乡》《祝福》'],
+['散文','《朝花夕拾》《野草》'],
+['杂文','《坟》《热风》《华盖集》等十六部，被称"投枪与匕首"'],
+['学术','《中国小说史略》为该领域开山之作'],
+['名句','其实地上本没有路，走的人多了，也便成了路 · 救救孩子']]},
+'李时珍':{q:'读万卷书，行万里路。',w:[
+['代表作','《<b>本草纲目</b>》52卷190万字，收药1892种、附方11096首、插图1109幅'],
+['方法','历时二十七年，亲历三省实地考察，参阅八百余种典籍，纠前人之误'],
+['贡献','按纲目分类体系接近现代自然分类法；达尔文引为"中国古代百科全书"'],
+['影响','译成日、拉丁、法、德、英等多种文字，2011年列入世界记忆名录']]},
+'曹雪芹':{q:'满纸荒唐言，一把辛酸泪。都云作者痴，谁解其中味。',w:[
+['代表作','《<b>红楼梦</b>》（《石头记》）前八十回'],
+['成就','塑造四百余人物；诗词、饮食、医药、园林、服饰皆成体系，被称"中国封建社会的百科全书"'],
+['创作','"批阅十载，增删五次"，家道中落后于西山黄叶村著书，举家食粥'],
+['影响','衍生出专门学科"红学"；公认中国古典小说的顶峰']]},
+'张衡':{q:'不患位之不尊，而患德之不崇。',w:[
+['发明','<b>候风地动仪</b>（138年测出陇西地震）、浑天仪（水力驱动演示天象）、指南车、记里鼓车'],
+['天文','《灵宪》提出浑天说，解释月食成因，记录星官2500颗'],
+['数学文学','算得圆周率约3.1622；《二京赋》《归田赋》为汉赋名篇'],
+['影响','月球背面环形山与小行星1802号以其命名']]},
+'祖冲之':{q:'',w:[
+['数学','把<b>圆周率</b>精确到3.1415926—3.1415927之间，领先世界近千年；提出密率355/113'],
+['天文','编《大明历》，首次引入岁差，回归年精度误差不足一秒'],
+['机械','复造指南车、水碓磨、千里船'],
+['影响','月球环形山"祖冲之"、小行星1888号以其命名；密率被日本称"祖率"']]},
+'毕昇':{q:'',w:[
+['发明','约1041—1048年发明<b>胶泥活字印刷术</b>：刻字、烧硬、排版、铁板松脂固定、印后拆解重用'],
+['记载','沈括《梦溪笔谈》详录其法，为唯一原始文献'],
+['意义','世界最早的活字印刷，比古腾堡早约四百年'],
+['影响','印刷术位列中国四大发明，被视为人类知识传播的分水岭']]},
+'郑和':{q:'欲国家富强，不可置海洋于不顾。',w:[
+['壮举','1405—1433年<b>七下西洋</b>，历三十余国，最远抵东非麻林（今肯尼亚）与红海'],
+['规模','船队二百余艘、官兵两万七千余人；宝船长四十四丈，为当时世界最大远洋船队'],
+['时间','比哥伦布首航早八十七年，比麦哲伦早一百多年'],
+['遗产','《郑和航海图》为现存最早的远洋航海图集；南洋多地至今有三宝庙']]},
+/* --- 世界 --- */
+'亚里士多德':{q:'吾爱吾师，吾更爱真理。',w:[
+['代表作','《<b>形而上学</b>》《工具论》《尼各马可伦理学》《政治学》《诗学》《物理学》'],
+['逻辑学','创立三段论与形式逻辑——此后两千年逻辑学的全部内容'],
+['学科奠基','几乎为每一门学科命名并划界：物理、生物、伦理、政治、修辞、诗学'],
+['影响','中世纪径称其为"那位哲学家"；但丁称"知者之师"']]},
+'柏拉图':{q:'吾爱吾师，但吾更爱真理（其学生语）；哲学始于惊奇。',w:[
+['代表作','《<b>理想国</b>》《会饮篇》《斐多篇》《法律篇》——三十余篇对话录'],
+['核心思想','理念论、洞穴寓言、灵魂三分、哲学王'],
+['贡献','创办<b>阿卡德米学园</b>（西方第一所高等学府，存续九百年）'],
+['影响','怀特海名言："全部西方哲学史不过是柏拉图的一系列脚注。"']]},
+'苏格拉底':{q:'未经审视的人生不值得过。',w:[
+['方法','<b>产婆术</b>（诘问法）：以连续追问帮助对方生出真知'],
+['思想','"认识你自己"；德性即知识；我唯一知道的就是我一无所知'],
+['著述','述而不作，思想经柏拉图与色诺芬记录传世'],
+['殉道','前399年以"渎神、败坏青年"受审，拒绝逃亡，从容饮鸩——哲学史的第一场殉难']]},
+'阿基米德':{q:'给我一个支点，我就能撬动地球。',w:[
+['物理','<b>杠杆原理</b>与<b>浮力定律</b>（阿基米德原理）；"尤里卡！"的洗澡顿悟'],
+['数学','球体积与表面积公式、穷竭法逼近圆周率（3.1408—3.1429）——微积分的先声'],
+['工程','阿基米德螺旋提水器、投石机与起重爪，令罗马军队围城两年'],
+['结局','前212年城破，罗马兵闯入时他正画图："别动我的圆！"遂被杀']]},
+'欧几里得':{q:'几何无王者之路。',w:[
+['代表作','《<b>几何原本</b>》13卷：五条公设、五条公理推演出465个命题'],
+['方法','公理化演绎体系——科学论证的黄金范式'],
+['影响','两千三百年来仅次于《圣经》的印行量；牛顿《原理》、斯宾诺莎《伦理学》皆仿其体例'],
+['汉译','1607年利玛窦与徐光启合译前六卷，"几何"一词即由此而来']]},
+'达·芬奇':{q:'简单是终极的复杂。',w:[
+['绘画','《<b>蒙娜丽莎</b>》《最后的晚餐》《岩间圣母》《维特鲁威人》'],
+['科学','解剖手稿逾七千页，绘人体骨骼肌肉血管；提出板块与化石成因猜想'],
+['工程设计','直升机、降落伞、坦克、机器人骑士、飞行器等超前草图'],
+['影响','"文艺复兴人"的定义者——艺术与科学在他身上从未分家']]},
+'牛顿':{q:'如果说我看得更远，那是因为我站在巨人的肩膀上。',w:[
+['代表作','《<b>自然哲学的数学原理</b>》（1687）'],
+['物理','运动三定律 + 万有引力定律——统一天上与地面的力学'],
+['数学','创立微积分（与莱布尼茨各自独立）；二项式定理'],
+['光学','棱镜色散实验证白光为复合光；著《光学》；发明反射望远镜'],
+['影响','奠定经典力学与科学方法论，工业革命的理论地基']]},
+'爱因斯坦':{q:'想象力比知识更重要。',w:[
+['奇迹年','1905年连发五文：<b>狭义相对论</b>、光电效应、布朗运动、质能方程 E=mc²'],
+['广义相对论','1915年发表；1919年日食观测证实光线弯曲，一夜成为全球名人'],
+['诺奖','1921年因<b>光电效应</b>（而非相对论）获诺贝尔物理学奖'],
+['影响','GPS、核能、宇宙学皆源于其理论；被《时代》评为二十世纪风云人物']]},
+'达尔文':{q:'幸存下来的既不是最强壮的，也不是最聪明的，而是最能适应变化的。',w:[
+['代表作','《<b>物种起源</b>》（1859）《人类的由来》《贝格尔号航海记》'],
+['理论','自然选择学说——共同祖先 + 变异 + 生存竞争'],
+['考察','1831—1836年环球航行五年，加拉帕戈斯群岛的雀鸟喙形为关键线索'],
+['影响','生物学的统一理论，并深刻改变人类的自我认知；葬于威斯敏斯特教堂']]},
+'莎士比亚':{q:'生存还是毁灭，这是一个问题。',w:[
+['四大悲剧','《<b>哈姆雷特</b>》《奥赛罗》《李尔王》《麦克白》'],
+['喜剧与历史剧','《仲夏夜之梦》《威尼斯商人》《罗密欧与朱丽叶》《亨利四世》'],
+['诗歌','十四行诗154首——"我能否将你比作夏日"'],
+['语言贡献','创造并普及约1700个英语词汇与大量习语'],
+['影响','作品译成一百余种语言，是世界上被演出最多的剧作家']]},
+'居里夫人':{q:'生活中没有什么可怕的东西，只有需要理解的东西。',w:[
+['发现','与皮埃尔发现<b>钋</b>与<b>镭</b>两种元素；提出"放射性"概念'],
+['诺奖','1903年物理奖、1911年化学奖——首位女性得主，也是首位两获诺奖者'],
+['战时','一战设计"小居里"移动X光车，救治百万伤员'],
+['影响','放射疗法奠基人；巴黎与华沙镭研究所创办者，其笔记至今仍具放射性']]},
+'贝多芬':{q:'我要扼住命运的咽喉。',w:[
+['交响曲','九部——《<b>第五（命运）</b>》《第六（田园）》《<b>第九（合唱）</b>》含《欢乐颂》'],
+['钢琴','32首奏鸣曲：《月光》《热情》《悲怆》；五部钢琴协奏曲'],
+['抗争','1798年起失聪，全聋后仍创作《第九》；首演时需人扶其转身才看见全场起立'],
+['影响','连接古典与浪漫两个时代；《欢乐颂》为今日欧盟盟歌']]},
+'哥白尼':{q:'',w:[
+['代表作','《<b>天体运行论</b>》（1543年临终付印）'],
+['理论','<b>日心说</b>：地球自转并绕日公转，破除千年地心说'],
+['谨慎','手稿藏三十余年，据传印本送到时他已弥留'],
+['影响','"哥白尼革命"成为科学革命的起点，也成为一切范式转移的代名词']]},
+'伽利略':{q:'但是，它仍然在转动。',w:[
+['天文','自制望远镜发现木星四颗卫星、月面环形山、金星盈亏、太阳黑子——《星际信使》'],
+['物理','斜面实验确立自由落体与惯性；比萨斜塔传说'],
+['方法','把数学与实验结合——现代科学方法的奠基'],
+['审判','1633年宗教裁判所迫其认罪，软禁至死；1992年梵蒂冈正式平反']]},
+'马丁·路德':{q:'这就是我的立场，我别无选择。',w:[
+['起点','1517年在维滕堡贴出<b>《九十五条论纲》</b>，抨击赎罪券'],
+['教义','因信称义、唯独圣经、信徒皆祭司'],
+['翻译','将圣经译为德语——既普及信仰，也塑造了现代德语'],
+['影响','引发<b>宗教改革</b>，欧洲宗教与政治版图从此重画；印刷术使其檄文两周传遍德意志']]},
+'甘地':{q:'以眼还眼，只会让全世界都盲目。',w:[
+['理念','<b>非暴力不合作</b>（Satyagraha 坚持真理）与公民不服从'],
+['行动','1930年<b>食盐进军</b>390公里；不合作运动、绝食制止教派仇杀'],
+['代表作','自传《我体验真理的故事》'],
+['影响','印度独立的精神领袖；马丁·路德·金、曼德拉皆奉其为师；被尊"圣雄"']]},
+'马丁·路德·金':{q:'我有一个梦想。',w:[
+['演讲','1963年<b>华盛顿大游行</b>《I Have a Dream》——二十世纪最著名的演讲'],
+['行动','蒙哥马利巴士抵制（1955）、伯明翰运动、塞尔玛游行'],
+['成果','推动《1964年民权法案》与《1965年选举权法案》'],
+['荣誉','1964年诺贝尔和平奖（时年35岁，史上最年轻之一）；1968年遇刺，美国设联邦纪念日']]},
+'哥伦布':{q:'',w:[
+['首航','1492年8月率三舰出发，10月12日抵巴哈马——欧洲人首次持续接触美洲'],
+['四航','1492—1504年四次远航，抵加勒比群岛与中南美海岸，至死认为到的是亚洲'],
+['影响','开启<b>哥伦布大交换</b>：作物、牲畜、疾病与人口跨洋流动，全球史由此改写'],
+['争议','殖民与原住民灾难的起点，其历史评价近数十年被持续重估']]},
+'麦哲伦':{q:'',w:[
+['壮举','1519年率五船270人西航，发现<b>麦哲伦海峡</b>，横渡太平洋（并为其命名）'],
+['结局','1521年在菲律宾麦克坦岛与土著冲突战死'],
+['完成','1522年"维多利亚号"载18人返西班牙——<b>人类首次环球航行</b>'],
+['意义','以航程实证地球是球体且海洋相通，人类的世界观从此闭合']]},
+'释迦牟尼':{q:'诸行无常，诸法无我，涅槃寂静。',w:[
+['核心教义','<b>四圣谛</b>（苦集灭道）、<b>八正道</b>、缘起法、中道'],
+['经历','舍太子位出家，六年苦行无果，菩提树下证悟；初转法轮于鹿野苑'],
+['僧团','建立最早的出家僧团，收容各种姓，冲击婆罗门等级'],
+['影响','佛教东传中日韩、南传东南亚，成为世界三大宗教之一']]},
+'孟德斯鸠':{q:'一切有权力的人都容易滥用权力，这是万古不易的一条经验。',w:[
+['代表作','《<b>论法的精神</b>》（1748）《波斯人信札》'],
+['理论','<b>三权分立</b>与制衡：立法、行政、司法相互牵制'],
+['影响','美国宪法与法国大革命的直接思想来源；现代宪政的基本框架']]},
+'亚当·斯密':{q:'我们的晚餐并非来自屠夫、酿酒师或面包师的恩惠，而是出于他们自利的打算。',w:[
+['代表作','《<b>国富论</b>》（1776）《道德情操论》'],
+['理论','<b>看不见的手</b>、劳动分工（制针厂例）、自由贸易与绝对优势'],
+['影响','现代经济学的奠基之作，与美国独立同年问世，被视为市场经济的思想宪章']]},
+'马克思':{q:'哲学家们只是用不同的方式解释世界，而问题在于改变世界。',w:[
+['代表作','《<b>资本论</b>》（1867起）《共产党宣言》（与恩格斯，1848）《1844年经济学哲学手稿》'],
+['理论','剩余价值学说、历史唯物主义、阶级斗争与异化理论'],
+['影响','二十世纪影响最深远的思想体系之一，重塑了全球政治版图与社会科学']]},
+'图灵':{q:'我们只能看到前方很短的距离，但可以看到那里有许多亟待完成的事。',w:[
+['理论','1936年提出<b>图灵机</b>模型，界定"可计算性"——计算机科学的理论起点'],
+['破译','二战中主持破解德军<b>恩尼格玛</b>密码，学界估计使战争缩短约两年'],
+['人工智能','1950年提出<b>图灵测试</b>："机器能思考吗？"'],
+['结局','因同性恋获罪被迫接受激素治疗，1954年离世；2013年获英国王室赦免'],
+['纪念','计算机界最高奖以其命名；2021年登上英镑50元纸币']]},
+'乔布斯':{q:'求知若饥，虚心若愚（Stay hungry, stay foolish）。',w:[
+['产品','Apple II、Macintosh、<b>iPod</b>、<b>iPhone</b>（2007）、iPad、App Store'],
+['皮克斯','收购并主导，出品《玩具总动员》——首部全电脑动画长片'],
+['理念','技术与人文的交叉口；"活着就是为了改变世界"'],
+['影响','重新定义了个人电脑、音乐产业、手机与移动互联网四个行业']]},
+'爱迪生':{q:'天才是百分之一的灵感加百分之九十九的汗水。',w:[
+['发明','<b>实用白炽灯</b>、留声机、电影摄影机、碳精话筒等，专利1093项'],
+['体系','1882年建成珍珠街发电站，首创发电—输电—用电的完整供电系统'],
+['实验室','门洛帕克实验室——世界第一个工业研发实验室，发明从此成为有组织的产业'],
+['争议','与特斯拉的"电流之战"中力推直流，最终交流电胜出']]},
+'特斯拉':{q:'现在是他们的，未来是我的。',w:[
+['交流电','<b>交流感应电动机</b>与多相交流输电系统——今日全球电网的基础'],
+['无线','特斯拉线圈、无线输电实验、早期无线电专利（1943年美最高法院裁定其优先）'],
+['其他','遥控技术、荧光照明、旋转磁场理论；专利近三百项'],
+['结局','晚年贫病，独居纽约旅馆；磁感应强度单位"特斯拉"以其命名']]},
+/* --- 帝王 · 政治家 --- */
+'秦始皇':{q:'朕为始皇帝。后世以计数，二世三世至于万世，传之无穷。',w:[
+['统一','前230—前221年十年灭六国，建立中国第一个中央集权帝国'],
+['制度','废分封行<b>郡县制</b>；书同文、车同轨、统一度量衡与货币'],
+['工程','万里长城、灵渠、驰道、秦直道、骊山陵与<b>兵马俑</b>'],
+['争议','焚书坑儒、徭役繁重；"百代都行秦政法"与"暴秦"两副面孔并存']]},
+'汉武帝':{q:'寇可往，我亦可往。',w:[
+['开疆','卫青霍去病三击匈奴，收河套、河西；设河西四郡，控西域'],
+['外交','两遣<b>张骞</b>出使西域，凿空<b>丝绸之路</b>'],
+['制度','推恩令削藩、盐铁官营、平准均输、设刺史；<b>独尊儒术</b>立太学'],
+['反思','晚年《轮台罪己诏》——中国史上首份帝王检讨书']]},
+'李世民':{q:'以铜为镜，可以正衣冠；以史为镜，可以知兴替；以人为镜，可以明得失。',w:[
+['贞观之治','轻徭薄赋、修订《贞观律》、完善三省六部与科举'],
+['纳谏','与魏征君臣相得，《贞观政要》记其治国问答，为东亚帝王教科书'],
+['武功','灭东突厥、吐谷浑、高昌，被西北各族尊为<b>天可汗</b>'],
+['影响','开启唐朝近三百年国运，被视为中国帝王的标准范本']]},
+'康熙':{q:'',w:[
+['武功','擒鳌拜、平三藩、收台湾、三征噶尔丹；雅克萨之战后签《尼布楚条约》'],
+['文治','编《康熙字典》《古今图书集成》《全唐诗》；治黄河、免钱粮'],
+['科学','向传教士学习几何、天文、解剖；主持实测《皇舆全览图》'],
+['在位','1661—1722年共61年，中国在位最久的皇帝；开"康乾盛世"']]},
+'成吉思汗':{q:'',w:[
+['统一','1206年统一蒙古诸部，被推为大汗'],
+['制度','创<b>千户制</b>与怯薛军；颁《大扎撒》法典；命创制蒙古文字；建驿站体系'],
+['征服','西夏、金、花剌子模——奠定横跨欧亚的最大陆地帝国'],
+['影响','驿路与商路使欧亚第一次系统连通，也带来空前的战争创伤']]},
+'凯撒':{q:'我来，我见，我征服。',w:[
+['军事','高卢战争八年征服全高卢；两渡莱茵、两征不列颠'],
+['著作','《<b>高卢战记</b>》《内战记》——古典拉丁散文典范，至今为教材'],
+['改革','推行<b>儒略历</b>（今公历前身）；扩元老院、开放公民权、安置老兵'],
+['遗产','前44年遇刺；名字成为"皇帝"的词源（Kaiser、Tsar）']]},
+'亚历山大大帝':{q:'我不偷窃胜利。',w:[
+['征服','十三年从希腊打到印度河：格拉尼库斯、伊苏斯、<b>高加米拉</b>三战灭波斯'],
+['建城','沿途建七十余座亚历山大城，最著名者为埃及亚历山大港'],
+['融合','推行希波通婚与共治，开启<b>希腊化时代</b>三百年'],
+['影响','希腊语与城市文明覆盖西亚北非，为罗马与基督教传播铺路']]},
+'奥古斯都':{q:'我接手的是一座砖城，留下的是一座大理石城。',w:[
+['终结内战','前31年阿克提乌姆海战击败安东尼与克利奥帕特拉'],
+['元首制','前27年获"奥古斯都"尊号，以共和之名行帝制之实'],
+['治绩','开启<b>罗马和平</b>（Pax Romana）两百年；改革财政、军制、行省'],
+['文化','庇护维吉尔、贺拉斯、李维——拉丁文学的黄金时代']]},
+'拿破仑':{q:'不想当元帅的士兵不是好士兵。',w:[
+['军事','奥斯特里茨、耶拿、瓦格拉姆等六十余战；军事史公认的战术天才'],
+['法典','《<b>拿破仑法典</b>》确立法律面前人人平等、私有财产神圣——影响全球民法体系'],
+['制度','创建法兰西银行、公立中学与荣誉军团勋章；统一度量衡'],
+['结局','1812年远征俄国失败，1815年滑铁卢终局，流放圣赫勒拿岛']]},
+'华盛顿':{q:'',w:[
+['独立战争','1775—1783年任大陆军总司令，约克敦围城迫英军投降'],
+['制宪','1787年主持制宪会议，促成美国宪法'],
+['首任总统','1789—1797年，确立文官治军与和平交接的传统'],
+['退位','拒绝第三任期并主动交出兵权——共和传统的活标本，被称"美国国父"']]},
+/* --- 中国名将 · 名臣 --- */
+'诸葛亮':{q:'鞠躬尽瘁，死而后已。',w:[
+['战略','<b>隆中对</b>：三分天下、跨有荆益、待天下有变——蜀汉的建国蓝图'],
+['名篇','《<b>出师表</b>》《后出师表》《诫子书》"非淡泊无以明志，非宁静无以致远"'],
+['治蜀','法令严明而民无怨；修都江堰、兴屯田、开西南'],
+['发明','木牛流马、诸葛连弩、八阵图（记载）'],
+['身后','历代祭祀不绝；成为中国智慧与忠诚的双重符号']]},
+'岳飞':{q:'待从头，收拾旧山河，朝天阙。',w:[
+['战功','1140年郾城、颍昌大捷破金军铁浮图；金人叹"撼山易，撼岳家军难"'],
+['治军','冻死不拆屋，饿死不掳掠——纪律为宋军之最'],
+['文学','《<b>满江红·怒发冲冠</b>》《小重山》传诵至今'],
+['冤案','1142年以"莫须有"罪死于风波亭；1162年孝宗平反，谥武穆，追封鄂王']]},
+'关羽':{q:'',w:[
+['战功','白马之战斩颜良；1219年<b>水淹七军</b>擒于禁斩庞德，威震华夏'],
+['义节','土山约三事、封金挂印千里寻兄——"忠义"的人格化'],
+['结局','荆州失守，败走麦城被擒杀'],
+['身后','历代加封至"武圣""关帝"；儒释道三教共尊，海外华人社区香火最盛']]},
+'霍去病':{q:'匈奴未灭，何以家为！',w:[
+['战功','十七岁初征即封冠军侯；六次出击匈奴，斩获十一万余'],
+['河西之战','前121年两出陇西，迫浑邪王率四万人降汉，打通河西走廊'],
+['封狼居胥','前119年漠北之战深入两千余里，登狼居胥山祭天——武将功业的最高象征'],
+['早逝','二十三岁病逝，墓形如祁连山，前置马踏匈奴石雕']]},
+'张骞':{q:'',w:[
+['首使','前138年出使月氏，被匈奴扣留十三年，持节不失'],
+['凿空','前126年归汉，首次带回西域三十六国的系统情报——史称"凿空"'],
+['再使','前119年再使乌孙，副使遍抵大宛、康居、大夏、安息'],
+['影响','<b>丝绸之路</b>由此贯通；葡萄、苜蓿、石榴、胡桃等相继传入中原']]},
+'王安石':{q:'天变不足畏，祖宗不足法，人言不足恤。',w:[
+['熙宁变法','青苗法、募役法、方田均税法、保甲法、市易法——全面理财强兵'],
+['文学','唐宋八大家之一；《游褒禅山记》《答司马谏议书》；诗"春风又绿江南岸"'],
+['争议','变法引发新旧党争数十年，功过至今聚讼'],
+['评价','列宁称其为"十一世纪中国最伟大的改革家"']]},
+'司马光':{q:'鉴于往事，有资于治道。',w:[
+['代表作','《<b>资治通鉴</b>》294卷，编年记1362年史事，历十九年成书'],
+['体例','编年体通史的巅峰，与《史记》并称"史学双璧"'],
+['政治','保守派领袖，反对王安石变法，元祐更化尽废新法'],
+['轶事','幼年"砸缸救友"家喻户晓；著书废稿盈两屋']]},
+'玄奘':{q:'宁向西天一步死，不向东土一步生。',w:[
+['西行','627年偷渡出关，历十七年、五万里，游学天竺'],
+['那烂陀','师从戒贤，曲女城无遮大会十八日无人能难，获"大乘天"尊号'],
+['译经','归国后主持译经十九年，出经论75部1335卷，创"新译"'],
+['著作','口述《<b>大唐西域记</b>》，为研究七世纪中亚南亚的第一手史料'],
+['影响','《西游记》原型；印度史的重建大量依赖其记载']]},
+'朱熹':{q:'问渠那得清如许？为有源头活水来。',w:[
+['代表作','《<b>四书章句集注</b>》——元至清六百年科举的官方标准'],
+['理学','集北宋五子之大成：理气论、格物致知、存天理灭人欲'],
+['教育','重建<b>白鹿洞书院</b>并订学规，为东亚书院制度范本'],
+['影响','朱子学远播朝鲜、日本、越南，成为东亚共同的思想框架']]},
+'沈括':{q:'',w:[
+['代表作','《<b>梦溪笔谈</b>》609条，被李约瑟称为"中国科学史上的里程碑"'],
+['科学','记录毕昇活字印刷；发现<b>磁偏角</b>（早欧洲四百年）；提出石油命名与用途'],
+['地质','据太行山螺蚌化石推断海陆变迁，凭雁荡地貌提出流水侵蚀说'],
+['其他','天文历法（十二气历）、数学（隙积术、会圆术）、地图（守令图）皆有建树']]},
+'徐霞客':{q:'大丈夫当朝碧海而暮苍梧。',w:[
+['壮游','三十余年间遍历二十一省，常徒步露宿，三次遇盗'],
+['代表作','《<b>徐霞客游记</b>》60余万字，以1613年5月19日开篇——今为中国旅游日'],
+['科考','实地勘定长江源出金沙江（纠正《禹贡》岷山导江旧说）；系统记录喀斯特地貌，早欧洲一百五十年'],
+['价值','兼具地理科考与文学价值，被誉"千古奇书"']]},
+'王羲之':{q:'仰观宇宙之大，俯察品类之盛。',w:[
+['代表作','《<b>兰亭序</b>》被誉"天下第一行书"；《快雪时晴帖》《十七帖》'],
+['典故','353年兰亭修禊，曲水流觞，微醺写就324字，二十个"之"字无一雷同'],
+['技艺','变汉魏质朴为妍美流便，确立行草的审美标准；"入木三分""临池学书"'],
+['影响','唐太宗酷爱，真迹传随葬昭陵；后世唯摹本传世，仍为书法第一宗师']]},
+'白居易':{q:'文章合为时而著，歌诗合为事而作。',w:[
+['长篇','《<b>长恨歌</b>》《琵琶行》——叙事诗双璧'],
+['讽喻诗','《卖炭翁》《观刈麦》等新乐府五十首，直陈民瘼'],
+['风格','力求"老妪能解"，存诗近三千首，为唐人之最'],
+['影响','生前即风行东亚，日本《源氏物语》大量化用其诗；平安贵族以能诵白诗为荣']]},
+'曹操':{q:'老骥伏枥，志在千里；烈士暮年，壮心不已。',w:[
+['统一北方','官渡之战以少胜多灭袁绍；平乌桓，定中原'],
+['诗歌','《<b>观沧海</b>》《短歌行》《龟虽寿》——建安风骨的领袖'],
+['制度','屯田制解决军粮，唯才是举打破门第，为曹魏立国奠基'],
+['兵学','注《孙子兵法》（今存最早注本），著《孟德新书》'],
+['评价','"治世之能臣，乱世之奸雄"——史书与演义中形象反差最大者']]},
+/* --- 世界文艺 · 科学 --- */
+'但丁':{q:'走自己的路，让别人去说吧。',w:[
+['代表作','《<b>神曲</b>》：地狱、炼狱、天堂三部共一百歌，14233行'],
+['语言','以托斯卡纳方言而非拉丁语写作——现代意大利语的奠基'],
+['另著','《新生》《论俗语》《飨宴》'],
+['影响','恩格斯称其为"中世纪的最后一位诗人，同时又是新时代的最初一位诗人"']]},
+'米开朗基罗':{q:'雕像本就在石头里，我只是去掉多余的部分。',w:[
+['雕塑','《<b>大卫</b>》《圣殇》《摩西》——文艺复兴雕塑的顶点'],
+['壁画','<b>西斯廷礼拜堂</b>穹顶画（四年独力完成，含《创造亚当》）与《最后的审判》'],
+['建筑','圣彼得大教堂穹顶设计'],
+['影响','与达·芬奇、拉斐尔并称"文艺复兴三杰"，享年88岁，创作近七十年']]},
+'托尔斯泰':{q:'幸福的家庭都是相似的，不幸的家庭各有各的不幸。',w:[
+['代表作','《<b>战争与和平</b>》《<b>安娜·卡列尼娜</b>》《复活》'],
+['规模','《战争与和平》五百余人物，全景描绘1812年卫国战争'],
+['思想','托尔斯泰主义：勿以暴力抗恶、道德自我完善——深刻影响甘地'],
+['晚年','放弃贵族特权与版权，82岁离家出走，病逝于小站']]},
+'莫扎特':{q:'',w:[
+['歌剧','《<b>费加罗的婚礼</b>》《唐璜》《魔笛》《女人心》'],
+['器乐','41部交响曲（《朱庇特》）、27部钢琴协奏曲、《小夜曲》《安魂曲》（未竟）'],
+['神童','三岁辨音、五岁作曲、六岁巡演欧洲；一生作品逾六百部'],
+['结局','1791年35岁病逝，葬于维也纳平民墓地，位置已不可考']]},
+'巴赫':{q:'',w:[
+['键盘','《<b>平均律钢琴曲集</b>》两卷48首——被称为音乐界的"旧约圣经"；《哥德堡变奏曲》'],
+['宗教','《马太受难曲》《b小调弥撒》'],
+['器乐','《勃兰登堡协奏曲》《无伴奏大提琴组曲》《赋格的艺术》'],
+['影响','复调音乐的集大成者；生前以管风琴师闻名，作品经门德尔松1829年重演而复兴']]},
+'开普勒':{q:'',w:[
+['三定律','行星轨道为<b>椭圆</b>、面积速度恒定、周期平方与半长轴立方成正比'],
+['数据','基于第谷二十年的精密观测，历时八年计算火星轨道'],
+['著作','《新天文学》《世界的和谐》《宇宙的奥秘》'],
+['影响','为牛顿万有引力定律提供了关键实证基础']]},
+'歌德':{q:'凡是自强不息者，到头来都会成功。',w:[
+['代表作','诗剧《<b>浮士德</b>》（历时六十年写成）、小说《少年维特的烦恼》'],
+['其他','《威廉·迈斯特》《意大利游记》《颜色论》'],
+['科学','发现人类颚间骨，提出植物变态学说'],
+['影响','德语文学的最高峰；提出"世界文学"概念，晚年热心研读中国小说']]},
+'弗莱明':{q:'',w:[
+['发现','1928年偶然发现<b>青霉素</b>——培养皿被霉菌污染，周围葡萄球菌尽溶'],
+['诺奖','1945年与弗洛里、钱恩共获诺贝尔生理学或医学奖'],
+['预警','受奖演说即警告滥用会导致耐药性——今日抗生素危机的先知'],
+['影响','抗生素时代开启，二战中挽救无数伤员，人类平均寿命显著延长']]},
+'门捷列夫':{q:'',w:[
+['代表作','1869年制定<b>元素周期表</b>，按原子量排列并留出空位'],
+['预言','准确预言镓、钪、锗三种未知元素的性质，数年内一一被发现'],
+['其他','石油分馏、气体研究、标准化度量衡'],
+['纪念','101号元素"钔"以其命名']]}
+};
 
 /* ============ 布局与渲染 ============ */
 const MINY = -3500, MAXY = 2080, NOW = 2026;
@@ -3712,6 +5359,7 @@ canvas.addEventListener('click', e=>{
 
 function openEntry(idx, term){
   const d = D[idx];
+  const extra = EXTRA[d.n] || {};
   const g = GROUPS.find(x=>x.id===d.g);
   panel.style.setProperty('--acc', g.color);
   document.getElementById('pdot').style.background = g.color;
@@ -3751,9 +5399,10 @@ function openEntry(idx, term){
     h += `</div>`;
     if(RU && RU.note) h += `<div class="rnote">※ ${RU.note}</div>`;
   }
-  /* 同期名人：按出生年从早到晚排序 */
-  if(d.f && d.f.length){
-    const items = d.f.map(x=>{
+  /* 同期名人（含百科补充）：按出生年从早到晚排序 */
+  const fAll = (d.f||[]).concat(extra.f||[]);
+  if(fAll.length){
+    const items = fAll.map(x=>{
       const parts = (x[1]||'').split(' · ');
       let yr = '', desc = x[1]||'';
       if(parts.length && /^约?(前)?\d/.test(parts[0])){ yr = parts[0]; desc = parts.slice(1).join(' · '); }
@@ -3764,15 +5413,16 @@ function openEntry(idx, term){
     h += `<h3>同期名人 / 标志成就 · 按出生先后</h3><div class="flist">` +
       items.map(it=>`<div class="frow"><span class="fyr">${it.yr||'—'}</span><b class="pname" data-nm="${it.n}" data-info="${it.yr||''}" data-tag="${it.desc||''}">${it.n}</b>${it.desc?`<span class="fd">${it.desc}</span>`:''}</div>`).join('') + `</div>`;
   }
-  if(d.note && d.note.s && d.note.s.length){
-    h += `<h3>详述</h3>` + d.note.s.map(s=>
+  const sAll = ((d.note && d.note.s) || []).concat(extra.s || []);
+  if(sAll.length){
+    h += `<h3>详述</h3>` + sAll.map(s=>
       `<p class="sec"><b>${s[0]}</b><span>${s[1]}</span></p>`
     ).join('');
   }
   PREV = {idx, term};
   body.innerHTML = h;
   body.scrollTop = 0;
-  if(geo) renderMap(geo, gcolor);
+  if(geo) renderMap(geo, gcolor, d.n);
   panel.classList.add('open');
   document.getElementById('backdrop').classList.add('show');
   /* 搜索高亮 */
@@ -3810,9 +5460,19 @@ function openBio(nm, info, tag){
   let h = `<div class="backbar" id="backbar">← 返回</div>`;
   if(key){
     const b = BIO[key];
+    const wk = WORKS[key];
     document.getElementById('pname').textContent = key;
     document.getElementById('pyears').textContent = `${b.l||''}${b.t?` · ${b.t}`:''}`;
     h += `<div class="brief">${b.t} · ${b.l}</div>`;
+    /* 代表作 · 主要贡献 · 名言（顶级名人） */
+    if(wk){
+      if(wk.q) h += `<blockquote class="bioquote">${wk.q}</blockquote>`;
+      if(wk.w && wk.w.length){
+        h += `<h3>代表作 / 主要贡献</h3><div class="worklist">` +
+          wk.w.map(x=>`<div class="workrow"><span class="wkcat">${x[0]}</span><span class="wktxt">${x[1]}</span></div>`).join('') +
+          `</div>`;
+      }
+    }
     h += `<h3>生平履历</h3><div class="biotl">` +
       b.tl.map(x=>`<div class="biorow"><span class="bioyr">${x[0]}</span><span class="bioev">${x[1]}</span></div>`).join('') + `</div>`;
     if(b.ev) h += `<h3>评价 / 影响</h3><p class="sec"><span>${b.ev}</span></p>`;
@@ -3844,6 +5504,8 @@ function buildIndex(){
     ((RU && RU.L) ? RU.L : (d.r||[])).forEach(x=>parts.push(x[0]||'', x[1]||'', x[2]||''));
     (d.f||[]).forEach(x=>parts.push(x[0]||'', x[1]||''));
     if(d.note){ parts.push(d.note.b||''); (d.note.s||[]).forEach(s=>parts.push(s[0], s[1])); }
+    const ex = EXTRA[d.n];
+    if(ex){ (ex.f||[]).forEach(x=>parts.push(x[0]||'', x[1]||'')); (ex.s||[]).forEach(s=>parts.push(s[0], s[1])); }
     const geo = GEO[d.n];
     if(geo){ (geo.cap||[]).forEach(c=>parts.push(c[0])); if(geo.note) parts.push(geo.note); }
     const t = parts.join(' ¶ ');
@@ -4158,50 +5820,16 @@ vscroll.addEventListener('wheel', e=>{
     if(Math.abs(vwheelAcc) > 40){ vzoomStepAt(vwheelAcc > 0 ? 1 : -1, e.clientY); vwheelAcc = 0; }
   }
 }, {passive:false});
-function setOrient(v){
-  VERT = v;
-  document.getElementById('outer').style.display = v ? 'none' : '';
-  document.getElementById('minimap').style.display = v ? 'none' : '';
-  document.getElementById('vwrap').style.display = v ? 'flex' : 'none';
-  const btn = document.getElementById('btnOrient');
-  btn.textContent = v ? '横版' : '竖版';
-  if(v){ renderVert(); vscroll.scrollTop = (8 + (-2300 - MINY)*VZOOMS[vzi]) - 40; }
-  else { render(false); updateMMView(); }
-}
-document.getElementById('btnOrient').onclick = ()=>setOrient(!VERT);
-/* 缩放按钮同时服务两种模式 */
+/* 缩放按钮 */
 const _zin = document.getElementById('zin'), _zout = document.getElementById('zout');
-_zin.onclick = ()=>{ if(VERT){ if(vzi<VZOOMS.length-1){ vzi++; renderVert(true); } } else if(zi<ZOOMS.length-1){ zi++; render(true); updateMMView(); } };
-_zout.onclick = ()=>{ if(VERT){ if(vzi>0){ vzi--; renderVert(true); } } else if(zi>0){ zi--; render(true); updateMMView(); } };
+_zin.onclick = ()=>{ if(zi<ZOOMS.length-1){ zi++; render(true); updateMMView(); } };
+_zout.onclick = ()=>{ if(zi>0){ zi--; render(true); updateMMView(); } };
 
-/* ============ 电脑版 / 手机版 ============ */
-const IS_PHONE = Math.min(screen.width, screen.height) < 560
-              || /Android|iPhone|iPod|iPad|Mobile/i.test(navigator.userAgent);
-const VPMETA = document.querySelector('meta[name="viewport"]');
-let DESK = false;   /* 手机默认真·手机版（原生分辨率，清晰），可切换电脑版 */
-function applyMode(){
-  VPMETA.setAttribute('content', DESK ? 'width=1280, viewport-fit=cover' : 'width=device-width, initial-scale=1, viewport-fit=cover');
-  const btn = document.getElementById('btnDesk');
-  btn.textContent = DESK ? '手机版' : '电脑版';
-  if(DESK){
-    if(VERT) setOrient(false);
-    setTimeout(()=>{ render(true); updateMMView(); }, 60);
-  } else {
-    setTimeout(()=>{ setOrient(true); }, 60);
-  }
-}
-if(IS_PHONE){
-  document.getElementById('btnDesk').style.display = '';
-}
-document.getElementById('btnDesk').onclick = ()=>{ DESK = !DESK; applyMode(); };
-
-/* ============ 初始化 ============ */
+/* ============ 初始化（手机与电脑统一为横版） ============ */
 buildMinimap();
 render(false);
 scroller.scrollLeft = PADL + (-2300 - MINY) * ZOOMS[zi] - 60;
 updateMMView();
-if(IS_PHONE){ applyMode(); }
-else if(window.matchMedia('(max-width:760px)').matches){ setOrient(true); }
 window.addEventListener('resize', ()=>{
   if(VERT) renderVert(true); else { render(true); updateMMView(); }
 });
