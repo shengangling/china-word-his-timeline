@@ -668,6 +668,13 @@
     .appbar{flex-wrap:wrap; row-gap:7px;}
     .tools{gap:7px; margin-left:auto;}
     .searchbox{flex:1 1 130px; min-width:110px; margin-left:2px;}
+    /* 搜索结果：脱离窄搜索框，改为贴屏全宽（top 由 JS 按输入框位置设定） */
+    #sresults{
+      position:fixed; left:8px; right:8px; width:auto;
+      max-height:min(60vh, 420px); border-radius:14px;
+    }
+    .sres{padding:11px 14px;}
+    .sres .sx{margin-top:3px; line-height:1.55;}
     .searchbox input{width:100%; font-size:16px;}
     #btnHelp, .seg .lvl, .brandtxt{display:none;}
     .vhead{padding:0 12px 6px; font-size:11px;}
@@ -5513,6 +5520,15 @@ function buildIndex(){
   });
 }
 function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+/* 手机端结果面板为 fixed 全宽，需按输入框实际位置定位（顶栏会换行，高度不固定） */
+function showResults(){
+  sresults.style.display = 'block';
+  if(window.matchMedia('(max-width:760px)').matches){
+    sresults.style.top = (searchInput.getBoundingClientRect().bottom + 6) + 'px';
+  } else {
+    sresults.style.top = '';
+  }
+}
 function doSearch(){
   const q = searchInput.value.trim().toLowerCase();
   if(!q){ sresults.style.display = 'none'; return; }
@@ -5520,7 +5536,7 @@ function doSearch(){
   const hits = SIDX.filter(x=>x.tl.includes(q)).slice(0, 15);
   if(!hits.length){
     sresults.innerHTML = `<div class="snone">没有找到「${escHtml(searchInput.value.trim())}」，试试别名或简称</div>`;
-    sresults.style.display = 'block';
+    showResults();
     return;
   }
   sresults.innerHTML = hits.map(x=>{
@@ -5530,7 +5546,7 @@ function doSearch(){
     const snip = escHtml(x.t.slice(a, pos)) + `<mark class="hl">${escHtml(x.t.slice(pos, pos+q.length))}</mark>` + escHtml(x.t.slice(pos+q.length, b));
     return `<div class="sres" data-i="${x.i}"><span class="sn">${d.n}</span><span class="sc">${g.name} · ${fmtRange(d)}</span><span class="sx">…${snip}…</span></div>`;
   }).join('');
-  sresults.style.display = 'block';
+  showResults();
 }
 function jumpTo(idx, term){
   const bar = canvas.querySelector(`.bar[data-i="${idx}"]`);
@@ -5831,7 +5847,8 @@ render(false);
 scroller.scrollLeft = PADL + (-2300 - MINY) * ZOOMS[zi] - 60;
 updateMMView();
 window.addEventListener('resize', ()=>{
-  if(VERT) renderVert(true); else { render(true); updateMMView(); }
+  render(true); updateMMView();
+  if(sresults.style.display === 'block') showResults();   /* 键盘弹出/转屏后重新贴合输入框 */
 });
 </script>
 </body>
