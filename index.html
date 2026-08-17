@@ -38,7 +38,11 @@
   html,body{height:100%;}
   body{
     font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-    background:var(--page); color:var(--ink);
+    background:
+      radial-gradient(1100px 460px at 15% -8%, color-mix(in srgb, var(--c-egypt) 6%, transparent), transparent 65%),
+      radial-gradient(900px 420px at 92% -6%, color-mix(in srgb, var(--c-europe) 5%, transparent), transparent 60%),
+      var(--page);
+    color:var(--ink);
     -webkit-tap-highlight-color:transparent;
     -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     display:flex; flex-direction:column; overflow:hidden;
@@ -68,7 +72,12 @@
     background:linear-gradient(180deg, var(--c-china), var(--c-egypt));
   }
   .brandtxt{display:flex; flex-direction:column; line-height:1.25;}
-  .brandtxt strong{font-size:15px; font-weight:750; letter-spacing:.01em; white-space:nowrap;}
+  .brandtxt strong{
+    font-family:"Songti SC","STSong","Noto Serif SC","SimSun",serif;
+    font-size:17px; font-weight:900; letter-spacing:.04em; white-space:nowrap;
+    background:linear-gradient(100deg, var(--c-china) 10%, var(--c-china2) 55%, var(--c-egypt) 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  }
   .brandtxt span{font-size:11px; color:var(--muted); white-space:nowrap;}
   .spacer{flex:1;}
   .seg{
@@ -117,9 +126,9 @@
   }
   #outer{
     position:relative; margin:0 12px 6px;
-    border:1px solid var(--ring); border-radius:14px;
+    border:1px solid var(--ring); border-radius:16px;
     background:var(--surface); overflow:hidden;
-    box-shadow:0 1px 3px rgba(0,0,0,.05), 0 8px 24px -12px rgba(0,0,0,.14);
+    box-shadow:0 1px 3px rgba(0,0,0,.05), 0 14px 34px -16px rgba(0,0,0,.20);
   }
   #scroller{overflow:auto; cursor:grab;}
   #scroller::-webkit-scrollbar{height:9px; width:9px;}
@@ -127,36 +136,73 @@
   #scroller::-webkit-scrollbar-track{background:transparent;}
   #scroller.dragging{cursor:grabbing;}
   #canvas{position:relative;}
+  /* 贴顶固定区（年代标尺 + 中国），世界区在其下方滚动 */
+  .pinwrap{
+    position:sticky; top:0; z-index:12;
+    background:var(--surface);
+    border-bottom:2px solid var(--baseline);
+    box-shadow:0 10px 18px -12px rgba(0,0,0,.32);
+  }
+  .worldwrap{position:relative;}
   .gridline{position:absolute; top:0; bottom:0; width:1px; background:var(--grid);}
   .axisband{
     position:absolute; left:0; right:0;
-    border-top:1px solid var(--baseline); border-bottom:1px solid var(--baseline);
-    background:color-mix(in srgb, var(--baseline) 12%, var(--surface));
+    border-bottom:1px solid var(--baseline);
+    background:linear-gradient(180deg,
+      color-mix(in srgb, var(--baseline) 26%, var(--surface)),
+      color-mix(in srgb, var(--baseline) 7%, var(--surface)));
   }
-  .tick{position:absolute; font-size:11.5px; font-weight:600; color:var(--muted); transform:translateX(-50%); white-space:nowrap; letter-spacing:.02em;}
-  .nowline{position:absolute; top:0; bottom:0; width:2px; background:var(--c-china); box-shadow:0 0 8px color-mix(in srgb, var(--c-china) 55%, transparent);}
-  .nowlabel{position:absolute; font-size:11px; color:var(--c-china); transform:translateX(-100%); padding-right:5px; white-space:nowrap;}
+  .tick{position:absolute; font-size:12px; font-weight:800; color:var(--ink2); transform:translateX(-50%); white-space:nowrap; letter-spacing:.04em; font-variant-numeric:tabular-nums;}
+  .tick.zero{color:var(--c-china);}
+  .tickstub{position:absolute; width:1.5px; background:var(--muted); transform:translateX(-50%); opacity:.85;}
+  .tickminor{position:absolute; width:1px; background:var(--baseline); transform:translateX(-50%);}
+  .nowline{position:absolute; top:0; bottom:0; width:2px; background:linear-gradient(180deg, color-mix(in srgb, var(--c-china) 60%, transparent), var(--c-china)); box-shadow:0 0 8px color-mix(in srgb, var(--c-china) 55%, transparent);}
+  .nowlabel{
+    position:absolute; font-size:10.5px; font-weight:700; white-space:nowrap;
+    color:var(--c-china); transform:translate(-100%, -3px); margin-left:-4px;
+    background:color-mix(in srgb, var(--c-china) 10%, var(--surface));
+    border:1px solid color-mix(in srgb, var(--c-china) 35%, transparent);
+    padding:2px 8px; border-radius:999px;
+  }
   .bar{
-    position:absolute; height:22px; border-radius:6px;
+    position:absolute; height:22px; border-radius:7px;
     border:1px solid; cursor:pointer;
     display:flex; align-items:center; overflow:hidden;
     font-size:12px; line-height:1; white-space:nowrap;
-    background-image:linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,0) 60%);
-    transition:transform .12s ease, filter .12s ease, box-shadow .12s ease;
+    transition:transform .15s ease, filter .15s ease;
+  }
+  .bar::before{
+    content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+    background:linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0) 55%);
   }
   @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]) .bar{
-      background-image:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,0) 60%);
+    :root:not([data-theme="light"]) .bar::before{
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 55%);
     }
   }
-  .bar:hover{filter:brightness(.96); transform:translateY(-1.5px);}
-  .gband{position:absolute; left:0; right:0; pointer-events:none; border-radius:8px;}
-  .bar .nm{padding:0 6px; font-weight:600; color:var(--ink);}
-  .bar .yr{color:var(--ink2); font-weight:400; font-size:11px; padding-right:6px;}
-  .bar.sel{outline:2px solid var(--ink); outline-offset:1px;}
+  .bar:hover{
+    transform:translateY(-2px);
+    filter:saturate(1.25) drop-shadow(0 4px 7px rgba(0,0,0,.20));
+    z-index:6;
+  }
+  .gband{position:absolute; left:0; right:0; pointer-events:none; border-radius:10px;}
+  .bar .nm{padding:0 7px; font-weight:700; color:inherit; letter-spacing:.01em;}
+  .bar .nm.sm{
+    font-size:10px; padding:0 3px; letter-spacing:0;
+    flex:0 1 auto; min-width:0; max-width:100%;
+    overflow:hidden; text-overflow:ellipsis;
+  }
+  .bar .yr{color:var(--ink2); font-weight:500; font-size:10.5px; padding-right:7px; opacity:.9;}
+  .bar.sel{outline:2px solid currentColor; outline-offset:1.5px; z-index:7;}
   .bar.legend-era{border-style:dashed;}
+  .blab{
+    position:absolute; z-index:4; cursor:pointer;
+    font-size:11px; font-weight:700; line-height:1; letter-spacing:.01em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .blab:hover{text-decoration:underline; text-underline-offset:2px;}
   .glabel{
-    position:absolute; left:8px; z-index:5; pointer-events:none;
+    position:absolute; left:8px; z-index:15; pointer-events:none;
     font-size:11px; font-weight:700; color:var(--ink);
     background:color-mix(in srgb, var(--surface) 80%, transparent);
     border:1px solid var(--ring);
@@ -176,10 +222,11 @@
     border-radius:999px; padding:5px 14px; font-size:12px; cursor:pointer;
     transition:border-color .12s, color .12s, background .12s;
   }
-  .eranav button:hover{border-color:var(--muted); color:var(--ink);}
+  .eranav button:hover{border-color:var(--muted); color:var(--ink); background:color-mix(in srgb, var(--ink) 4%, var(--surface));}
   .eranav button.cur{
-    background:color-mix(in srgb, var(--ink) 88%, transparent);
-    border-color:transparent; color:var(--surface); font-weight:600;
+    background:linear-gradient(135deg, color-mix(in srgb, var(--ink) 94%, transparent), color-mix(in srgb, var(--ink) 76%, transparent));
+    border-color:transparent; color:var(--surface); font-weight:650;
+    box-shadow:0 2px 8px -2px rgba(0,0,0,.4);
   }
   /* ===== 底部缩略导航条 ===== */
   #minimap{
@@ -195,8 +242,8 @@
   .mmaxis{position:absolute; left:0; right:0; height:1px; background:var(--baseline);}
   #mmview{
     position:absolute; top:0; bottom:0; z-index:3;
-    border:1.5px solid var(--ink);
-    border-radius:7px; cursor:grab;
+    border:2px solid var(--ink);
+    border-radius:8px; cursor:grab;
     background:color-mix(in srgb, var(--ink) 9%, transparent);
     box-shadow:0 0 0 100vmax color-mix(in srgb, var(--page) 55%, transparent) inset;
   }
@@ -222,16 +269,33 @@
   }
   .vgrid{position:absolute; left:0; right:0; height:1px; background:var(--grid);}
   .vbar{
-    position:absolute; border-radius:7px; border:1px solid; cursor:pointer;
-    overflow:hidden; padding:5px 2px 3px;
+    position:absolute; border-radius:8px; border:1px solid; cursor:pointer;
+    overflow:hidden; padding:6px 2px 3px;
     writing-mode:vertical-rl; text-orientation:upright;
-    font-size:11.5px; font-weight:600; line-height:1.15; letter-spacing:.08em;
+    font-size:11.5px; font-weight:700; line-height:1.15; letter-spacing:.08em;
     color:var(--ink); white-space:nowrap;
     transition:filter .12s;
   }
+  .vbar::before{
+    content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+    background:linear-gradient(90deg, rgba(255,255,255,.4), rgba(255,255,255,0) 60%);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .vbar::before{
+      background:linear-gradient(90deg, rgba(255,255,255,.07), rgba(255,255,255,0) 60%);
+    }
+  }
   .vbar:active{filter:brightness(.92);}
-  .vbar.sel{outline:2px solid var(--ink); outline-offset:1px;}
+  .vbar.sel{outline:2px solid currentColor; outline-offset:1.5px; z-index:5;}
   .vbar.legend-era{border-style:dashed;}
+  /* 短条块：名称改横排小字居中 */
+  .vbar .vlab{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    writing-mode:horizontal-tb; text-orientation:mixed;
+    font-size:9.5px; font-weight:700; letter-spacing:0; line-height:1;
+    max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    padding:0 1px;
+  }
   .vhead{
     display:flex; align-items:center; gap:6px;
     padding:0 14px 8px; font-size:11.5px; color:var(--muted);
@@ -270,9 +334,9 @@
   #tooltip{
     position:fixed; z-index:50; pointer-events:none; display:none;
     background:var(--panel-bg); color:var(--ink);
-    border:1px solid var(--ring); border-radius:8px;
-    box-shadow:0 4px 16px rgba(0,0,0,.18);
-    padding:7px 10px; font-size:12px; max-width:280px;
+    border:1px solid var(--ring); border-left:3px solid var(--muted); border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,.20);
+    padding:8px 11px; font-size:12px; max-width:280px; line-height:1.5;
   }
   #tooltip .t{font-weight:700; margin-bottom:2px;}
   #tooltip .y{color:var(--ink2);}
@@ -294,25 +358,36 @@
   #panel.open{transform:translateX(0);}
   #panel .phead{
     padding:16px 18px 12px; border-bottom:1px solid var(--ring);
-    display:flex; align-items:flex-start; gap:10px;
+    display:flex; align-items:flex-start; gap:11px;
+    background:linear-gradient(180deg, color-mix(in srgb, var(--acc, var(--muted)) 13%, var(--panel-bg)), var(--panel-bg));
   }
-  #panel .pdot{width:14px; height:14px; border-radius:4px; margin-top:4px; flex:none;}
-  #panel h2{font-size:18px;}
-  #panel .pyears{font-size:13px; color:var(--ink2); margin-top:2px;}
+  #panel .pdot{
+    width:15px; height:15px; border-radius:5px; margin-top:5px; flex:none;
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--acc, var(--muted)) 22%, transparent);
+  }
+  #panel h2{
+    font-family:"Songti SC","STSong","Noto Serif SC","SimSun",serif;
+    font-size:20px; font-weight:900; letter-spacing:.03em; line-height:1.3;
+  }
+  #panel .pyears{font-size:13px; color:var(--ink2); margin-top:3px;}
   #panel .pclose{
     margin-left:auto; border:none; background:none; color:var(--muted);
     font-size:20px; cursor:pointer; padding:2px 6px;
   }
   #panel .pbody{padding:14px 18px 28px; overflow-y:auto; font-size:13.5px; line-height:1.65;}
-  #panel h3{font-size:12px; color:var(--muted); font-weight:600; margin:16px 0 7px; letter-spacing:.05em;}
+  #panel h3{
+    display:flex; align-items:center; gap:9px;
+    font-size:12px; color:var(--muted); font-weight:700; margin:18px 0 8px; letter-spacing:.06em;
+  }
+  #panel h3::after{content:''; flex:1; height:1px; background:linear-gradient(90deg, var(--ring), transparent);}
   #panel h3:first-child{margin-top:0;}
   /* 概要 */
   .brief{
-    font-size:14px; font-weight:600; line-height:1.6;
-    padding:10px 12px; border-radius:8px;
-    background:color-mix(in srgb, var(--ink) 4%, var(--panel-bg));
+    font-size:14px; font-weight:600; line-height:1.7;
+    padding:11px 14px; border-radius:10px;
+    background:color-mix(in srgb, var(--acc, var(--muted)) 7%, var(--panel-bg));
     border-left:4px solid var(--acc, var(--muted));
-    margin-bottom:4px;
+    margin-bottom:6px;
   }
   /* 地图 */
   .mapbox{
@@ -506,7 +581,7 @@
     <span class="brandmark"></span>
     <span class="brandtxt">
       <strong>中外历史对照时间轴</strong>
-      <span>前3500 — 2026 · 轴上世界 · 轴下中国</span>
+      <span>前3500 — 2026 · 中国置顶 · 世界对照</span>
     </span>
   </div>
   <div class="searchbox">
@@ -584,7 +659,7 @@ const GROUPS = [
   {id:'neareast',name:'两河 · 波斯 · 中东', side:'world', color:'var(--c-neareast)'},
   {id:'europe',  name:'欧洲',        side:'world', color:'var(--c-europe)'},
   {id:'china',   name:'中国',        side:'china', color:'var(--c-china)'},
-  {id:'china2',  name:'中国 · 并立政权', side:'china', color:'var(--c-china2)'},
+  {id:'china2',  name:'中国 · 并立政权', side:'china', color:'var(--c-china2)', compact:true},
 ];
 
 const D = [
@@ -3290,7 +3365,7 @@ function renderMap(geo, color){
 const MINY = -3500, MAXY = 2080, NOW = 2026;
 const PADL = 40, PADR = 30;
 const ROWH = 30, BARH = 22, GGAP = 12, AXISH = 44, PADT = 10, PADB = 14;
-const ZOOMS = [0.25, 0.4, 0.6, 1.0, 1.8, 3.2];
+const ZOOMS = [0.25, 0.4, 0.6, 1.0, 1.8, 3.2, 6.0];
 let zi = 2;
 
 const scroller = document.getElementById('scroller');
@@ -3306,29 +3381,37 @@ function fmtRange(d){
 
 function packGroup(items){
   const sorted = [...items].sort((a,b)=>(a.draw?a.draw[0]:a.s)-(b.draw?b.draw[0]:b.s));
-  const rowEnds = [];
+  const rowEnds = [], rowLast = [];
   for(const it of sorted){
     const s = it.draw ? it.draw[0] : it.s;
     const e = it.draw ? it.draw[1] : it.e;
+    it._next = Infinity;   /* 同行下一条的起始年，用于判断条块右侧还剩多少空隙放外置名称 */
     let placed = false;
     for(let r = 0; r < rowEnds.length; r++){
-      if(s >= rowEnds[r] - 1){ it._row = r; rowEnds[r] = e; placed = true; break; }
+      if(s >= rowEnds[r] - 1){
+        it._row = r; rowEnds[r] = e;
+        if(rowLast[r]) rowLast[r]._next = s;
+        rowLast[r] = it; placed = true; break;
+      }
     }
-    if(!placed){ it._row = rowEnds.length; rowEnds.push(e); }
+    if(!placed){ it._row = rowEnds.length; rowEnds.push(e); rowLast.push(it); }
   }
   return rowEnds.length;
 }
 
-/* 分组标签固定在左侧，随纵向滚动同步 */
+/* 分组标签固定在左侧；中国区贴顶固定，世界区标签随纵向滚动同步 */
 function syncLabels(){
   const st = scroller.scrollTop;
   document.querySelectorAll('.glabel').forEach(l=>{
-    l.style.top = (+l.dataset.y - st) + 'px';
-    l.style.opacity = (+l.dataset.y - st) < -4 ? '0' : '1';
+    if(l.dataset.pin){ l.style.top = l.dataset.y + 'px'; l.style.opacity = '1'; return; }
+    const t = +l.dataset.y - st;
+    l.style.top = t + 'px';
+    l.style.opacity = t < +l.dataset.min ? '0' : '1';
   });
 }
 
 function tickStep(ppy){
+  if(ppy >= 4.8) return 50;
   if(ppy >= 2.4) return 100;
   if(ppy >= 0.9) return 250;
   if(ppy >= 0.45) return 500;
@@ -3338,7 +3421,7 @@ function tickStep(ppy){
 let RSCALE = 1, _rescaling = false;
 function render(keepCenter){
   const ppy = ZOOMS[zi];
-  const ROWH = Math.round(30*RSCALE), BARH = Math.round(22*RSCALE),
+  const ROWH = Math.round(32*RSCALE), BARH = Math.round(24*RSCALE),
         GGAP = Math.round(12*RSCALE), HDR = Math.round(18*RSCALE),
         AXISH = Math.round(44*Math.min(RSCALE,1.5));
   document.getElementById('zlvl').textContent = ppy + ' px/年';
@@ -3356,61 +3439,115 @@ function render(keepCenter){
   const worldGroups = groups.filter(g=>g.side==='world');
   const chinaGroups = groups.filter(g=>g.side==='china');
 
-  let y = PADT;
-  for(const g of worldGroups){ g.labelY = y; g.y0 = y + HDR; y += HDR + g.rows*ROWH + GGAP; }
-  const axisTop = y;
-  y += AXISH + GGAP;
-  for(const g of chinaGroups){ g.labelY = y; g.y0 = y + HDR; y += HDR + g.rows*ROWH + GGAP; }
-  const H = y + PADB;
+  /* 布局：贴顶固定区 = 年代标尺 + 中国各组；世界各组在下方，可上下滚动 */
+  /* compact 组（并立政权）行高更紧凑，少占固定区高度 */
+  const rh = g => g.compact ? Math.round(21*RSCALE) : ROWH;
+  const bh = g => g.compact ? Math.round(17*RSCALE) : BARH;
+  const hd = g => g.compact ? Math.round(10*RSCALE) : HDR;
+  const AXH = Math.round(40*Math.min(RSCALE,1.4));
+  let py = AXH + Math.round(7*RSCALE);
+  for(const g of chinaGroups){ g.labelY = py; g.y0 = py + hd(g); py += hd(g) + g.rows*rh(g) + (g.compact ? Math.round(GGAP/2) : GGAP); }
+  const pinH = py - Math.round(GGAP/3);
+  let wy = Math.round(9*RSCALE);
+  for(const g of worldGroups){ g.labelY = wy; g.y0 = wy + hd(g); wy += hd(g) + g.rows*rh(g) + GGAP; }
+  const worldH = wy + PADB;
+  const H = pinH + worldH;
+  render._pinH = pinH;
 
   canvas.style.width = W + 'px';
   canvas.style.height = H + 'px';
 
-  let html = '';
-  /* 分组底色带 */
-  groups.forEach(g => {
-    html += `<div class="gband" style="top:${g.labelY}px; height:${HDR + g.rows*ROWH}px; background:color-mix(in srgb, ${g.color} 4%, transparent)"></div>`;
-  });
-  html += `<div class="axisband" style="top:${axisTop}px; height:${AXISH}px"></div>`;
   const step = tickStep(ppy);
   const t0 = Math.ceil(MINY/step)*step;
-  let si = 0;
-  for(let ty = t0; ty <= MAXY; ty += step, si++){
-    const x = X(ty);
-    if(si % 2 === 0) html += `<div class="colshade" style="left:${x}px; width:${step*ppy}px"></div>`;
-    html += `<div class="gridline" style="left:${x}px"></div>`;
-    html += `<div class="tick" style="left:${x}px; top:${axisTop + AXISH/2 - 8}px">${ty===0?'公元元年':fmtYear(ty)}</div>`;
-  }
-  html += `<div class="nowline" style="left:${X(NOW)}px"></div>`;
-  html += `<div class="nowlabel" style="left:${X(NOW)}px; top:${axisTop + AXISH/2 - 8}px">今 ${NOW}</div>`;
-
-  groups.forEach(g => {
+  const gbandHtml = g =>
+    `<div class="gband" style="top:${g.labelY}px; height:${hd(g) + g.rows*rh(g)}px; background:linear-gradient(90deg, color-mix(in srgb, ${g.color} 8%, transparent), color-mix(in srgb, ${g.color} 4%, transparent) 260px, color-mix(in srgb, ${g.color} 4%, transparent)); box-shadow:inset 3px 0 0 color-mix(in srgb, ${g.color} 45%, transparent)"></div>`;
+  const colsHtml = () => {
+    let h = '', si = 0;
+    for(let ty = t0; ty <= MAXY; ty += step, si++){
+      const x = X(ty);
+      if(si % 2 === 0) h += `<div class="colshade" style="left:${x}px; width:${step*ppy}px"></div>`;
+      h += `<div class="gridline" style="left:${x}px"></div>`;
+    }
+    return h;
+  };
+  const barsHtml = g => {
+    let h = '';
     for(const it of g.items){
       const s = it.draw ? it.draw[0] : it.s;
       const e = it.draw ? it.draw[1] : it.e;
       const x = X(s), w = Math.max((e - s) * ppy, 3);
-      const top = g.y0 + it._row * ROWH + (ROWH - BARH)/2;
+      const RH = rh(g), BH = bh(g);
+      const top = g.y0 + it._row * RH + (RH - BH)/2;
       const idx = D.indexOf(it);
-      const showNm = w >= 52, showYr = w >= 150;
-      html += `<div class="bar ${it.dash?'legend-era':''}" data-i="${idx}" style="left:${x}px; top:${top}px; width:${w}px; height:${BARH}px;
-        background:color-mix(in srgb, ${g.color} 26%, var(--surface));
-        border-color:color-mix(in srgb, ${g.color} 70%, var(--surface));
+      /* 名称显示分级：正常字号放得下 → 缩小字号放得下 → 外置到右侧空隙 → 小字号省略号兜底 */
+      const showNm = w >= it.n.length * 12.5 + 16;
+      const showSm = !showNm && w >= it.n.length * 10.5 + 8;
+      const gapPx = (it._next === Infinity ? 1e9 : (it._next - e) * ppy) - 8;
+      const useBlab = !showNm && !showSm && gapPx > 22;
+      const showTiny = !showNm && !showSm && !useBlab && w >= 20;
+      const showYr = showNm && w >= it.n.length * 12.5 + 110;
+      const inkc = `color-mix(in srgb, ${g.color} 60%, var(--ink))`;
+      const inner = showNm ? `<span class="nm">${it.n}</span>`
+                  : (showSm || showTiny) ? `<span class="nm sm">${it.n}</span>` : '';
+      h += `<div class="bar ${it.dash?'legend-era':''}" data-i="${idx}" style="left:${x}px; top:${top}px; width:${w}px; height:${BH}px;
+        ${g.compact ? 'font-size:11px; border-radius:6px;' : ''}
+        color:${inkc};
+        background:linear-gradient(180deg, color-mix(in srgb, ${g.color} 34%, var(--surface)), color-mix(in srgb, ${g.color} 19%, var(--surface)));
+        border-color:color-mix(in srgb, ${g.color} 72%, var(--surface));
         box-shadow: inset 3px 0 0 ${g.color}, 0 1px 3px rgba(0,0,0,.10);">
-        ${showNm ? `<span class="nm">${it.n}</span>` : ''}${showYr ? `<span class="yr">${fmtRange(it)}</span>` : ''}
+        ${inner}${showYr ? `<span class="yr">${fmtRange(it)}</span>` : ''}
       </div>`;
+      if(useBlab){
+        h += `<div class="blab" data-i="${idx}" style="left:${x + w + 5}px; top:${top + BH/2 - 6}px; max-width:${Math.min(gapPx, 150)}px; color:${inkc}">${it.n}</div>`;
+      }
     }
-  });
+    return h;
+  };
 
-  canvas.innerHTML = html;
+  /* --- 固定区：标尺 + 中国 --- */
+  let pin = colsHtml();
+  pin += `<div class="axisband" style="top:0; height:${AXH}px"></div>`;
+  /* 次级小刻度 */
+  const mstep = step / 5;
+  if(mstep * ppy >= 16){
+    for(let ty = t0 - step; ty <= MAXY; ty += mstep){
+      if(ty < MINY || ((ty - t0) % step === 0)) continue;
+      pin += `<div class="tickminor" style="left:${X(ty)}px; top:${AXH-5}px; height:5px"></div>`;
+    }
+  }
+  for(let ty = t0; ty <= MAXY; ty += step){
+    const x = X(ty);
+    pin += `<div class="tickstub" style="left:${x}px; top:${AXH-9}px; height:9px"></div>`;
+    pin += `<div class="tick${ty===0?' zero':''}" style="left:${x}px; top:${Math.round(AXH/2)-12}px">${ty===0?'公元元年':fmtYear(ty)}</div>`;
+  }
+  pin += `<div class="nowlabel" style="left:${X(NOW)}px; top:${Math.round(AXH/2)-11}px">今 ${NOW}</div>`;
+  chinaGroups.forEach(g => { pin += gbandHtml(g); pin += barsHtml(g); });
+  pin += `<div class="nowline" style="left:${X(NOW)}px"></div>`;
+
+  /* --- 世界区 --- */
+  let world = colsHtml();
+  worldGroups.forEach(g => { world += gbandHtml(g); world += barsHtml(g); });
+  world += `<div class="nowline" style="left:${X(NOW)}px"></div>`;
+
+  canvas.innerHTML =
+    `<div class="pinwrap" style="height:${pinH}px">${pin}</div>` +
+    `<div class="worldwrap" style="height:${worldH}px">${world}</div>`;
 
   document.querySelectorAll('.glabel').forEach(el=>el.remove());
   const outer = document.getElementById('outer');
   groups.forEach(g => {
+    const isCn = g.side === 'china';
+    const topPos = (isCn ? g.labelY : pinH + g.labelY) - 1;
     const lab = document.createElement('div');
     lab.className = 'glabel';
-    lab.innerHTML = `<span class="sw" style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${g.color};margin-right:5px"></span>${g.name}`;
-    lab.style.top = (g.labelY - 1) + 'px';
-    lab.dataset.y = g.labelY - 1;
+    lab.innerHTML = `<span class="sw" style="display:inline-block;width:8px;height:8px;border-radius:3px;background:${g.color};margin-right:6px"></span>${g.name}`;
+    lab.style.top = topPos + 'px';
+    lab.style.background = `color-mix(in srgb, ${g.color} 9%, var(--surface))`;
+    lab.style.borderColor = `color-mix(in srgb, ${g.color} 38%, transparent)`;
+    lab.style.color = `color-mix(in srgb, ${g.color} 55%, var(--ink))`;
+    lab.dataset.y = topPos;
+    if(isCn) lab.dataset.pin = '1';
+    else lab.dataset.min = pinH + 2;
     outer.appendChild(lab);
   });
   syncLabels();
@@ -3546,9 +3683,11 @@ function bindPinch(el, apply){
 bindPinch(scroller, (dir, cx)=>zoomStepAt(dir, cx));
 
 canvas.addEventListener('mousemove', e=>{
-  const bar = e.target.closest('.bar');
+  const bar = e.target.closest('.bar, .blab');
   if(!bar){ tooltip.style.display='none'; return; }
   const d = D[+bar.dataset.i];
+  const gG = GROUPS.find(x=>x.id===d.g);
+  tooltip.style.borderLeftColor = gG ? gG.color : 'var(--muted)';
   const gg = GEO[d.n];
   const capLine = gg && gg.cap && gg.cap.length ? `<div class="y">都城：${gg.cap[0][0].replace(/（[^）]*）/,'')}</div>` : '';
   tooltip.innerHTML = `<div class="t">${d.n}</div><div class="y">${fmtRange(d)} · 约${d.e-d.s}年</div>${capLine}<div class="y">点击查看版图与详情</div>`;
@@ -3563,16 +3702,18 @@ canvas.addEventListener('mouseleave', ()=> tooltip.style.display='none');
 const panel = document.getElementById('panel');
 canvas.addEventListener('click', e=>{
   if(dragMoved){ dragMoved = false; return; } /* 拖动平移后不触发 */
-  const bar = e.target.closest('.bar');
-  if(!bar){ closePanel(); return; } /* 点击空白处收起面板 */
+  const t = e.target.closest('.bar, .blab');
+  if(!t){ closePanel(); return; } /* 点击空白处收起面板 */
+  const bar = t.classList.contains('bar') ? t : canvas.querySelector(`.bar[data-i="${t.dataset.i}"]`);
   if(selEl) selEl.classList.remove('sel');
-  selEl = bar; bar.classList.add('sel');
-  openEntry(+bar.dataset.i);
+  selEl = bar; if(bar) bar.classList.add('sel');
+  openEntry(+t.dataset.i);
 });
 
 function openEntry(idx, term){
   const d = D[idx];
   const g = GROUPS.find(x=>x.id===d.g);
+  panel.style.setProperty('--acc', g.color);
   document.getElementById('pdot').style.background = g.color;
   document.getElementById('pname').textContent = d.n;
   document.getElementById('pyears').textContent = `${fmtRange(d)} · ${g.name} · 约${d.e-d.s}年`;
@@ -3733,6 +3874,15 @@ function jumpTo(idx, term){
   const bar = canvas.querySelector(`.bar[data-i="${idx}"]`);
   if(bar){
     scroller.scrollLeft = parseFloat(bar.style.left) + parseFloat(bar.style.width)/2 - scroller.clientWidth/2;
+    /* 世界区条块：纵向滚动到固定区下方可见位置 */
+    if(bar.closest('.worldwrap')){
+      const bt = parseFloat(bar.style.top);
+      const pinH = render._pinH || 0;
+      const vis = bt - scroller.scrollTop;
+      if(vis < 0 || vis > scroller.clientHeight - pinH - 40){
+        scroller.scrollTop = Math.max(0, bt - 40);
+      }
+    }
     if(selEl) selEl.classList.remove('sel');
     selEl = bar; bar.classList.add('sel');
   }
@@ -3857,16 +4007,17 @@ function buildMinimap(){
     html += `<div class="mmgrid" style="left:${pct(ty)}%"></div>`;
     html += `<div class="mmtick" style="left:${pct(ty)}%">${ty===0?'公元元年':fmtYear(ty)}</div>`;
   }
+  /* 与主视图一致：中国在上，世界在下 */
   const TOP = 5, ROW = 4.2;
-  world.forEach((g,i)=>{
+  china.forEach((g,i)=>{
     for(const it of g.items){
       const s = it.draw?it.draw[0]:it.s, e = it.draw?it.draw[1]:it.e;
       html += `<div class="mmbar" style="left:${pct(s)}%; width:${Math.max((e-s)/SPAN*100,.18)}%; top:${TOP+i*ROW}px; background:${g.color}"></div>`;
     }
   });
-  const mid = TOP + world.length*ROW + 2;
+  const mid = TOP + china.length*ROW + 2;
   html += `<div class="mmaxis" style="top:${mid}px"></div>`;
-  china.forEach((g,i)=>{
+  world.forEach((g,i)=>{
     for(const it of g.items){
       const s = it.draw?it.draw[0]:it.s, e = it.draw?it.draw[1]:it.e;
       html += `<div class="mmbar" style="left:${pct(s)}%; width:${Math.max((e-s)/SPAN*100,.18)}%; top:${mid+4+i*ROW}px; background:${g.color}"></div>`;
@@ -3965,10 +4116,13 @@ function renderVert(keepYear){
       const s = it.draw?it.draw[0]:it.s, e = it.draw?it.draw[1]:it.e;
       const top = Y(s), h = Math.max((e-s)*ppy, 4);
       const idx = D.indexOf(it);
+      const inkc = `color-mix(in srgb, ${c.g.color} 60%, var(--ink))`;
+      const label = h >= 42 ? it.n : (h >= 13 ? `<span class="vlab">${it.n}</span>` : '');
       html += `<div class="vbar ${it.dash?'legend-era':''}" data-i="${idx}" style="left:${x}px; top:${top}px; width:${LANE}px; height:${h}px;
-        background:color-mix(in srgb, ${c.g.color} 26%, var(--surface));
-        border-color:color-mix(in srgb, ${c.g.color} 70%, var(--surface));
-        box-shadow: inset 0 3px 0 ${c.g.color};">${h >= 42 ? it.n : ''}</div>`;
+        color:${inkc};
+        background:linear-gradient(90deg, color-mix(in srgb, ${c.g.color} 34%, var(--surface)), color-mix(in srgb, ${c.g.color} 19%, var(--surface)));
+        border-color:color-mix(in srgb, ${c.g.color} 72%, var(--surface));
+        box-shadow: inset 0 3px 0 ${c.g.color};">${label}</div>`;
     }
   });
   html += `<div class="vgrid" style="top:${Y(NOW)}px; height:2px; background:var(--c-china)"></div>`;
