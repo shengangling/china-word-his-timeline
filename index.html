@@ -359,6 +359,29 @@
   }
   #tooltip .t{font-weight:700; margin-bottom:2px;}
   #tooltip .y{color:var(--ink2);}
+  /* 离线状态与提示条 */
+  .offline .brandmark{
+    background:linear-gradient(170deg, var(--muted), var(--baseline));
+    box-shadow:none;
+  }
+  .offline .brandtxt span::after{
+    content:'· 离线'; color:var(--c-egypt); font-weight:700; margin-left:5px;
+  }
+  #toast{
+    position:fixed; left:50%; bottom:26px; transform:translate(-50%, 14px);
+    z-index:80; max-width:min(88vw, 420px);
+    padding:10px 18px; border-radius:999px;
+    background:color-mix(in srgb, var(--ink) 90%, transparent); color:var(--surface);
+    font-size:13px; font-weight:600; letter-spacing:.01em;
+    box-shadow:0 8px 26px -8px rgba(0,0,0,.55);
+    opacity:0; pointer-events:none;
+    transition:opacity .24s, transform .24s;
+  }
+  #toast.show{opacity:1; transform:translate(-50%, 0);}
+  #toast.tappable{pointer-events:auto; cursor:pointer;}
+  @media (max-width:760px){
+    #toast{bottom:calc(20px + env(safe-area-inset-bottom));}
+  }
   /* 详情面板 */
   #backdrop{
     position:fixed; inset:0; z-index:55;
@@ -5862,6 +5885,47 @@ vscroll.addEventListener('wheel', e=>{
 const _zin = document.getElementById('zin'), _zout = document.getElementById('zout');
 _zin.onclick = ()=>{ if(zi<ZOOMS.length-1){ zi++; render(true); updateMMView(); } };
 _zout.onclick = ()=>{ if(zi>0){ zi--; render(true); updateMMView(); } };
+
+/* ============ 离线支持（PWA） ============ */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js').then(reg=>{
+      /* 发现新版本且已装好时，提示一次刷新 */
+      reg.addEventListener('updatefound', ()=>{
+        const nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener('statechange', ()=>{
+          if(nw.state === 'installed' && navigator.serviceWorker.controller){
+            showToast('已更新到新版本，点此刷新', ()=>{
+              nw.postMessage('skipWaiting');
+              location.reload();
+            });
+          }
+        });
+      });
+    }).catch(()=>{});
+  });
+}
+/* 网络状态提示 */
+function showToast(text, onClick){
+  let t = document.getElementById('toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = text;
+  t.className = 'show' + (onClick ? ' tappable' : '');
+  t.onclick = onClick || null;
+  clearTimeout(showToast._t);
+  if(!onClick) showToast._t = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function syncNetBadge(){
+  document.body.classList.toggle('offline', !navigator.onLine);
+}
+window.addEventListener('online', ()=>{ syncNetBadge(); showToast('已恢复网络'); });
+window.addEventListener('offline', ()=>{ syncNetBadge(); showToast('已离线 · 本地缓存可继续浏览'); });
+syncNetBadge();
 
 /* ============ 初始化（手机与电脑统一为横版） ============ */
 buildMinimap();
